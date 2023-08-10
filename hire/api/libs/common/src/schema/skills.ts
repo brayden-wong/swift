@@ -1,6 +1,7 @@
 import { relations } from "drizzle-orm";
 import { pgTable, text, uuid } from "drizzle-orm/pg-core";
-import { UsersAndSkillsTable } from "./users.and.skills";
+import { UsersAndSkillsTable } from "./profile.and.skills";
+import { ApplicationsAndSkillsTable } from "./applications.and.skills";
 
 export const SkillsTable = pgTable("skills", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -8,5 +9,7 @@ export const SkillsTable = pgTable("skills", {
 });
 
 export const SkillsRelations = relations(SkillsTable, ({ many }) => ({
+  applicationsAndSkills: many(ApplicationsAndSkillsTable),
+  jobPostsAndSkills: many(ApplicationsAndSkillsTable),
   usersAndSkills: many(UsersAndSkillsTable),
 }));

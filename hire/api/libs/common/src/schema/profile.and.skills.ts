@@ -3,10 +3,10 @@ import { UsersTable } from "./users";
 import { SkillsTable } from "./skills";
 import { relations } from "drizzle-orm";
 
-export const UsersAndSkillsTable = pgTable(
+export const ProfileAndSkillsTable = pgTable(
   "users_and_skills",
   {
-    userId: uuid("user_id")
+    profileId: uuid("profile_id")
       .notNull()
       .references(() => UsersTable.id),
     skillId: uuid("skill_id")
@@ -14,19 +14,19 @@ export const UsersAndSkillsTable = pgTable(
       .references(() => SkillsTable.id),
   },
   (table) => ({
-    primaryKey: primaryKey(table.userId, table.skillId),
+    primaryKey: primaryKey(table.profileId, table.skillId),
   }),
 );
 
 export const UsersAndSkillsRelations = relations(
-  UsersAndSkillsTable,
+  ProfileAndSkillsTable,
   ({ one }) => ({
-    user: one(UsersTable, {
-      fields: [UsersAndSkillsTable.userId],
+    profile: one(UsersTable, {
+      fields: [ProfileAndSkillsTable.profileId],
       references: [UsersTable.id],
     }),
     skill: one(SkillsTable, {
-      fields: [UsersAndSkillsTable.skillId],
+      fields: [ProfileAndSkillsTable.skillId],
       references: [SkillsTable.id],
     }),
   }),

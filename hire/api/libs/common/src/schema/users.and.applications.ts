@@ -1,6 +1,7 @@
 import { pgTable, primaryKey, timestamp, uuid } from "drizzle-orm/pg-core";
 import { UsersTable } from "./users";
 import { relations, sql } from "drizzle-orm";
+import { JobPostsTable } from "./job.posts";
 import { ApplicationsTable } from "./applications";
 
 export const UsersAndApplicationsTable = pgTable(
@@ -11,7 +12,7 @@ export const UsersAndApplicationsTable = pgTable(
       .references(() => UsersTable.id),
     applicationId: uuid("application_id")
       .notNull()
-      .references(() => UsersTable.id),
+      .references(() => ApplicationsTable.id),
     appliedAt: timestamp("applied_at")
       .notNull()
       .default(sql`CURRENT_TIMESTAMP`),
@@ -28,9 +29,9 @@ export const UsersAndApplicationsRelations = relations(
       fields: [UsersAndApplicationsTable.userId],
       references: [UsersTable.id],
     }),
-    application: one(ApplicationsTable, {
+    application: one(JobPostsTable, {
       fields: [UsersAndApplicationsTable.applicationId],
-      references: [ApplicationsTable.id],
+      references: [JobPostsTable.id],
     }),
   }),
 );

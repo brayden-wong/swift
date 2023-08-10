@@ -10,8 +10,8 @@ import {
   uuid,
 } from "drizzle-orm/pg-core";
 import { FilesTable } from "./files";
-import { UsersAndSkillsTable } from "./users.and.skills";
 import { UsersAndApplicationsTable } from "./users.and.applications";
+import { ProfileTable } from "./profile";
 
 export const UsersRoleEnum = pgEnum("user_role", [
   "company_user",
@@ -32,6 +32,9 @@ export const UsersTable = pgTable(
     firstTimeLogin: boolean("first_time_login").notNull().default(true),
 
     role: UsersRoleEnum("role").notNull().default("standard_user"),
+    profileId: uuid("profile_id").references(() => ProfileTable.id, {
+      onDelete: "cascade",
+    }),
     createdAt: timestamp("created_at")
       .notNull()
       .default(sql`CURRENT_TIMESTAMP`),
@@ -46,8 +49,11 @@ export const UsersTable = pgTable(
   }),
 );
 
-export const UsersTableRelations = relations(UsersTable, ({ many }) => ({
+export const UsersTableRelations = relations(UsersTable, ({ many, one }) => ({
+  profile: one(ProfileTable, {
+    fields: [UsersTable.id],
+    references: [ProfileTable.userId],
+  }),
   files: many(FilesTable),
   usersAndApplications: many(UsersAndApplicationsTable),
-  usersAndSkills: many(UsersAndSkillsTable),
 }));
