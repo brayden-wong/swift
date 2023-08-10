@@ -7,6 +7,7 @@ import {
   uuid,
 } from "drizzle-orm/pg-core";
 import { UsersTable } from "./users";
+import { ApplicationsAndFilesTable } from "./applications.and.files";
 
 export const FilesTable = pgTable(
   "files",
@@ -33,9 +34,10 @@ export const FilesTable = pgTable(
   }),
 );
 
-export const FilesRelations = relations(FilesTable, ({ one }) => ({
+export const FilesRelations = relations(FilesTable, ({ many, one }) => ({
   user: one(UsersTable, {
     fields: [FilesTable.userId],
     references: [UsersTable.id],
   }),
+  applicationsAndFiles: many(ApplicationsAndFilesTable),
 }));
