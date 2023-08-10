@@ -1,0 +1,41 @@
+version: "3.8"
+
+services:
+  gateway:
+    build:
+      context: .
+      dockerfile: ./apps/gateway/dockerfile
+      target: development
+    command: yarn start:dev gateway
+    environment:
+      - NODE_ENV=docker
+    env_file:
+      - ./apps/gateway/.env.local.docker
+    volumes:
+      - ./:/usr/src/app
+      - /usr/src/app/node_modules
+    networks:
+      - swift_hire
+    ports:
+      - 8080:8080
+  auth:
+    build:
+      context: .
+      dockerfile: ./apps/auth/dockerfile
+      target: development
+    command: yarn start:dev auth
+    environment:
+      - NODE_ENV=docker
+    env_file:
+      - ./apps/auth/.env.local.docker
+    volumes:
+      - ./:/usr/src/app
+      - /usr/src/app/node_modules
+    networks:
+      - swift_hire
+    ports:
+      - 8081
+
+networks:
+  swift_hire:
+    external: false
