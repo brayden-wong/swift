@@ -5,6 +5,7 @@
 #env
 .env
 .env.local*.*
+yarn.lock
 
 # Logs
 logs
