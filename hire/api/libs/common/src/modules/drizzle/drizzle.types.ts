@@ -1,5 +1,5 @@
-import { NeonHttpDatabase } from 'drizzle-orm/neon-http';
-import * as schema from '@app/common/schema';
+import { NeonHttpDatabase } from "drizzle-orm/neon-http";
+import * as schema from "@app/common/schemas";
 
 export type DrizzleConfig = {
   url: string;

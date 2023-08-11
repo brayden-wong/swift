@@ -1,28 +1,14 @@
 import { Module } from "@nestjs/common";
-import { ClientsModule, Transport } from "@nestjs/microservices";
-import { AUTH_SERVICE } from "@app/common/constants";
-import { ConfigModule, ConfigService } from "@nestjs/config";
+import { ConfigModule } from "@nestjs/config";
+import { AuthModule } from "./modules";
 
 @Module({
   imports: [
+    AuthModule,
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: `./apps/gateway/.env.local.${process.env.NODE_ENV}`,
     }),
-    ClientsModule.registerAsync([
-      {
-        name: AUTH_SERVICE,
-        imports: [ConfigModule],
-        inject: [ConfigService],
-        useFactory: (config: ConfigService) => ({
-          transport: Transport.TCP,
-          options: {
-            host: config.get("AUTH_HOST"),
-            port: config.get<number>("AUTH_PORT"),
-          },
-        }),
-      },
-    ]),
   ],
 })
 export class GatewayModule {}

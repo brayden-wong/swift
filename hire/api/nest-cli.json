@@ -38,6 +38,15 @@
         "tsConfigPath": "apps/jobs/tsconfig.app.json"
       }
     },
+    "users": {
+      "type": "application",
+      "root": "apps/users",
+      "entryFile": "main",
+      "sourceRoot": "apps/users/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/users/tsconfig.app.json"
+      }
+    },
     "common": {
       "type": "library",
       "root": "libs/common",
@@ -45,15 +54,6 @@
       "sourceRoot": "libs/common/src",
       "compilerOptions": {
         "tsConfigPath": "libs/common/tsconfig.lib.json"
-      }
-    },
-    "cron": {
-      "type": "application",
-      "root": "apps/cron",
-      "entryFile": "main",
-      "sourceRoot": "apps/cron/src",
-      "compilerOptions": {
-        "tsConfigPath": "apps/cron/tsconfig.app.json"
       }
     }
   }

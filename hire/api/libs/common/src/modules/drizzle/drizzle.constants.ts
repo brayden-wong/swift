@@ -1,6 +1,8 @@
-import { Inject } from '@nestjs/common';
+import { Inject } from "@nestjs/common";
 
-const INJECT_DRIZZLE_TOKEN = Symbol('DRIZZLE_TOKEN_INJECTION_TOKEN');
+const DRIZZLE_CONFIG_TOKEN = "DRIZZLE_CONFIG_TOKEN";
+const DRIZZLE_INJECTION_TOKEN = "DRIZZLE_INJECTION_TOKEN";
 
-export const getDrizzleToken = () => Inject(INJECT_DRIZZLE_TOKEN);
-export const InjectDrizzle = () => Inject(getDrizzleToken());
+export const getDrizzleConfigToken = () => DRIZZLE_CONFIG_TOKEN;
+export const getDrizzleInstanceToken = () => DRIZZLE_INJECTION_TOKEN;
+export const InjectDrizzle = () => Inject(DRIZZLE_INJECTION_TOKEN);

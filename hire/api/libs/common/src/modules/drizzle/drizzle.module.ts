@@ -1,40 +1,48 @@
-import { Global, Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { type Database, DrizzleConfig } from './drizzle.types';
-import { getDrizzleToken } from './drizzle.constants';
+import { Global, Module } from "@nestjs/common";
+import { ConfigModule, ConfigService } from "@nestjs/config";
+import { type Database, DrizzleConfig } from "./drizzle.types";
+import {
+  getDrizzleConfigToken,
+  getDrizzleInstanceToken,
+} from "./drizzle.constants";
 
-import { neon, neonConfig } from '@neondatabase/serverless';
-import { drizzle } from 'drizzle-orm/neon-http';
+import { neon, neonConfig } from "@neondatabase/serverless";
+import { drizzle } from "drizzle-orm/neon-http";
 
-import * as schema from '@app/common/schema';
+import * as schema from "@app/common/schemas";
 
 @Global()
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: '.env',
+      envFilePath: ".env",
     }),
   ],
   providers: [
     {
-      provide: getDrizzleToken(),
+      provide: getDrizzleConfigToken(),
       inject: [ConfigService],
-      useFactory: async (config: ConfigService) => {
-        const dbConfig = {
-          url: config.get<string>('DATABASE_URL'),
+      useFactory: async (config: ConfigService) =>
+        ({
+          url: config.get<string>("DATABASE_URL"),
           options: {
             schema,
-            logger: config.get<string>('NODE_ENV') === 'dev',
+            logger: config.get<string>("NODE_ENV") === "dev",
           },
-        } satisfies DrizzleConfig;
-
+        }) satisfies DrizzleConfig,
+    },
+    {
+      provide: getDrizzleInstanceToken(),
+      inject: [getDrizzleConfigToken()],
+      useFactory: async (drizzleConfig: DrizzleConfig) => {
         neonConfig.fetchConnectionCache = true;
-        const sql = neon(dbConfig.url);
+        const sql = neon(drizzleConfig.url);
 
-        return drizzle(sql, dbConfig.options);
+        return drizzle(sql, drizzleConfig.options);
       },
     },
   ],
+  exports: [getDrizzleInstanceToken()],
 })
 export class DrizzleModule {}
