@@ -1,1 +1,1 @@
-export * from "./auth/auth.module";
+export * from "./gateway-auth/gateway.auth.module";

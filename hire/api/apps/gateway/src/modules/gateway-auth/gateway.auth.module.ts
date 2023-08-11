@@ -1,11 +1,13 @@
 import { Module } from "@nestjs/common";
 import { ClientsModule, Transport } from "@nestjs/microservices";
 import { ConfigService } from "@nestjs/config";
-import { AuthController } from "./auth.controller";
-import { AuthService } from "./auth.service";
+import { GatewayAuthController } from "./gateway.auth.controller";
+import { GatewayAuthService } from "./gateway.auth.service";
 
 import { AUTH_SERVICE } from "@app/common/constants";
 import { InjectConfig } from "@app/common/utils";
+import { LocalGuard } from "@app/common/guards";
+import { LocalStrategy } from "@app/common/strategies";
 
 @Module({
   imports: [
@@ -22,7 +24,7 @@ import { InjectConfig } from "@app/common/utils";
       },
     ]),
   ],
-  controllers: [AuthController],
-  providers: [AuthService],
+  controllers: [GatewayAuthController],
+  providers: [GatewayAuthService, LocalStrategy, LocalGuard],
 })
-export class AuthModule {}
+export class GatewayAuthModule {}

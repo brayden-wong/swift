@@ -47,7 +47,11 @@ export const UsersTable = pgTable(
   }),
 );
 
-export const UsersTableRelations = relations(UsersTable, ({ many }) => ({
+export const UsersTableRelations = relations(UsersTable, ({ many, one }) => ({
+  profile: one(ProfileTable, {
+    fields: [UsersTable.id],
+    references: [ProfileTable.userId],
+  }),
   files: many(FilesTable),
   usersAndApplications: many(UsersAndApplicationsTable),
 }));

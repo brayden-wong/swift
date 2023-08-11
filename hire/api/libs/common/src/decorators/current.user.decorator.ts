@@ -7,12 +7,7 @@ import { RefreshToken } from "../types";
 export const CurrentUser = createParamDecorator(
   (
     data: {
-      user:
-        | "User"
-        | "GoogleUser"
-        | "FacebookUser"
-        | "DiscordUser"
-        | "RefreshToken";
+      user: "User" | "RefreshToken";
       key?: keyof User | keyof RefreshToken;
     } = { user: "User", key: null },
     context: ExecutionContext,

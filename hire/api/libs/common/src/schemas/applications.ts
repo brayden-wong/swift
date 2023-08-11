@@ -3,7 +3,6 @@ import { pgTable, uuid } from "drizzle-orm/pg-core";
 import { JobPostsTable } from "./job.posts";
 import { ApplicationsAndSkillsTable } from "./applications.and.skills";
 import { UsersTable } from "./users";
-import { FilesTable } from "./files";
 import { ApplicationsAndFilesTable } from "./applications.and.files";
 
 export const ApplicationsTable = pgTable("applications", {

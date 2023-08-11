@@ -1,11 +1,13 @@
 import { Module } from "@nestjs/common";
 import { ConfigModule, ConfigService } from "@nestjs/config";
-
-import { AuthController } from "./auth.controller";
+import { JwtModule } from "@nestjs/jwt";
 import { ClientsModule, Transport } from "@nestjs/microservices";
+
 import { InjectConfig } from "@app/common/utils";
 import { USERS_SERVICE } from "@app/common/constants";
 import { DrizzleModule } from "@app/common/modules";
+
+import { AuthController } from "./auth.controller";
 import { AuthService } from "./auth.service";
 
 @Module({
@@ -26,6 +28,7 @@ import { AuthService } from "./auth.service";
         }),
       },
     ]),
+    JwtModule.register({}),
     DrizzleModule,
   ],
   controllers: [AuthController],
