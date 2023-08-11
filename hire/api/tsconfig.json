@@ -19,8 +19,12 @@
     "noFallthroughCasesInSwitch": false,
     "noUnusedParameters": true,
     "paths": {
-      "@app/common": ["libs/common/src"],
-      "@app/common/*": ["libs/common/src/*"]
+      "@app/common": [
+        "libs/common/src"
+      ],
+      "@app/common/*": [
+        "libs/common/src/*"
+      ]
     }
   },
   "watchOptions": {
@@ -28,6 +32,9 @@
     "watchDirectory": "dynamicPriorityPolling",
     "fallbackPolling": "dynamicPriority",
     "synchronousWatchDirectory": true,
-    "excludeDirectories": ["**/node_modules", "dist"]
+    "excludeDirectories": [
+      "**/node_modules",
+      "dist"
+    ]
   }
 }

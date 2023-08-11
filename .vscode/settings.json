@@ -1,0 +1,7 @@
+{
+  "a-file-icon-vscode.folderColor": "#4b526d",
+  "a-file-icon-vscode.folderTheme": "specific",
+  "a-file-icon-vscode.activeIconPacks": ["ngrx", "nest", "react", "redux"],
+  "a-file-icon-vscode.opacity": 1,
+  "a-file-icon-vscode.arrowTheme": "triangle"
+}

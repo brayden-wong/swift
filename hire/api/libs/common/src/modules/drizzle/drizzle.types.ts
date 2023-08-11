@@ -1,5 +1,5 @@
-import { NeonHttpDatabase } from 'drizzle-orm/neon-http';
-import * as schema from '@app/common/schema';
+import { type NodePgDatabase } from "drizzle-orm/node-postgres";
+import * as schema from "@app/common/schemas";
 
 export type DrizzleConfig = {
   url: string;
@@ -9,4 +9,4 @@ export type DrizzleConfig = {
   };
 };
 
-export type Database = NeonHttpDatabase<typeof schema>;
+export type Database = NodePgDatabase<typeof schema>;

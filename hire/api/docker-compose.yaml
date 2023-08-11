@@ -18,6 +18,10 @@ services:
       - swift_hire
     ports:
       - 8080:8080
+<<<<<<< HEAD
+=======
+
+>>>>>>> api-main
   auth:
     build:
       context: .
@@ -33,8 +37,27 @@ services:
       - /usr/src/app/node_modules
     networks:
       - swift_hire
+<<<<<<< HEAD
     ports:
       - 8081
+=======
+
+  users:
+    build:
+      context: .
+      dockerfile: ./apps/users/dockerfile
+      target: development
+    command: yarn start:dev users
+    environment:
+      - NODE_ENV=docker
+    env_file:
+      - ./apps/users/.env.local.docker
+    volumes:
+      - ./:/usr/src/app
+      - /usr/src/app/node_modules
+    networks:
+      - swift_hire
+>>>>>>> api-main
 
 networks:
   swift_hire:

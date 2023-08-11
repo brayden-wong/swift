@@ -1,40 +1,54 @@
-import { Global, Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { type Database, DrizzleConfig } from './drizzle.types';
-import { getDrizzleToken } from './drizzle.constants';
+import { Global, Module } from "@nestjs/common";
+import { ConfigModule, ConfigService } from "@nestjs/config";
+import { drizzle } from "drizzle-orm/node-postgres";
+import { Client } from "pg";
+import { DrizzleConfig } from "./drizzle.types";
+import {
+  getDrizzleConfigToken,
+  getDrizzleInstanceToken,
+} from "./drizzle.constants";
 
-import { neon, neonConfig } from '@neondatabase/serverless';
-import { drizzle } from 'drizzle-orm/neon-http';
-
-import * as schema from '@app/common/schema';
+import * as schema from "@app/common/schemas";
 
 @Global()
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: '.env',
+      envFilePath: ".env",
     }),
   ],
   providers: [
     {
-      provide: getDrizzleToken(),
+      provide: getDrizzleConfigToken(),
       inject: [ConfigService],
-      useFactory: async (config: ConfigService) => {
-        const dbConfig = {
-          url: config.get<string>('DATABASE_URL'),
+      useFactory: async (config: ConfigService) =>
+        ({
+          url: `postgres://${config.get<string>(
+            "DATABASE_USER",
+          )}:${config.get<string>("DATABASE_PASSWORD")}@${config.get<string>(
+            "DATABASE_HOST",
+          )}/${config.get<string>(
+            "DATABASE_NAME",
+          )}?ssl=true&options=project%3D${config.get<string>("ENDPOINT_ID")}`,
           options: {
             schema,
-            logger: config.get<string>('NODE_ENV') === 'dev',
+            logger: config.get<string>("NODE_ENV") === "dev",
           },
-        } satisfies DrizzleConfig;
+        }) satisfies DrizzleConfig,
+    },
+    {
+      provide: getDrizzleInstanceToken(),
+      inject: [getDrizzleConfigToken()],
+      useFactory: async (drizzleConfig: DrizzleConfig) => {
+        const client = new Client(drizzleConfig.url);
 
-        neonConfig.fetchConnectionCache = true;
-        const sql = neon(dbConfig.url);
+        await client.connect();
 
-        return drizzle(sql, dbConfig.options);
+        return drizzle(client, drizzleConfig.options);
       },
     },
   ],
+  exports: [getDrizzleInstanceToken()],
 })
 export class DrizzleModule {}
