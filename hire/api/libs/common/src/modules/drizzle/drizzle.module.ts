@@ -1,13 +1,16 @@
 import { Global, Module } from "@nestjs/common";
 import { ConfigModule, ConfigService } from "@nestjs/config";
-import { drizzle } from "drizzle-orm/node-postgres";
-import { Client } from "pg";
+// import { drizzle } from "drizzle-orm/node-postgres";
+// import { Client } from "pg";
+import { drizzle } from "drizzle-orm/neon-http";
+import { neon, neonConfig } from "@neondatabase/serverless";
 import { DrizzleConfig } from "./drizzle.types";
 import {
   getDrizzleConfigToken,
   getDrizzleInstanceToken,
 } from "./drizzle.constants";
 
+// import ws from "ws";
 import * as schema from "@app/common/schemas";
 
 @Global()
@@ -41,11 +44,12 @@ import * as schema from "@app/common/schemas";
       provide: getDrizzleInstanceToken(),
       inject: [getDrizzleConfigToken()],
       useFactory: async (drizzleConfig: DrizzleConfig) => {
-        const client = new Client(drizzleConfig.url);
+        console.log(drizzleConfig.url);
+        neonConfig.fetchConnectionCache = true;
 
-        await client.connect();
+        const sql = neon(drizzleConfig.url);
 
-        return drizzle(client, drizzleConfig.options);
+        return drizzle(sql, drizzleConfig.options);
       },
     },
   ],

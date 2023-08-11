@@ -1,9 +1,9 @@
-import { drizzle } from "drizzle-orm/node-postgres";
-import { migrate } from "drizzle-orm/node-postgres/migrator";
+import { drizzle } from "drizzle-orm/neon-http";
+import { migrate } from "drizzle-orm/neon-http/migrator";
 import { Logger } from "@nestjs/common";
-import { Client } from "pg";
 
 import * as dotenv from "dotenv";
+import { neon } from "@neondatabase/serverless";
 
 dotenv.config({
   path: `.env`,
@@ -16,11 +16,9 @@ const main = async () => {
 
   if (!connectionString) throw new Error("DATABASE_URL is required");
 
-  const client = new Client(connectionString);
+  const sql = neon(connectionString);
 
-  await client.connect();
-
-  const db = drizzle(client);
+  const db = drizzle(sql);
 
   await migrate(db, { migrationsFolder: "./.drizzle" });
 };

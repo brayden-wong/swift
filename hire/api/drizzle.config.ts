@@ -4,12 +4,13 @@ config({
   path: `.env`,
 });
 
-console.log(process.env.DATABASE_URL);
+const connectionString = `postgres://${process.env.DATABASE_USER}:${process.env.DATABASE_PASSWORD}@${process.env.DATABASE_HOST}/${process.env.DATABASE_NAME}?ssl=true&options=project%3D${process.env.ENDPOINT_ID}`;
+
 export default {
   schema: "./libs/common/src/schemas",
   driver: "pg",
   dbCredentials: {
-    connectionString: process.env.DATABASE_URL,
+    connectionString,
   },
   out: "./.drizzle",
 } satisfies Config;
