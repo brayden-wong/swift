@@ -1,13 +1,12 @@
 import { Global, Module } from "@nestjs/common";
 import { ConfigModule, ConfigService } from "@nestjs/config";
-import { type Database, DrizzleConfig } from "./drizzle.types";
+import { drizzle } from "drizzle-orm/node-postgres";
+import { Client } from "pg";
+import { DrizzleConfig } from "./drizzle.types";
 import {
   getDrizzleConfigToken,
   getDrizzleInstanceToken,
 } from "./drizzle.constants";
-
-import { neon, neonConfig } from "@neondatabase/serverless";
-import { drizzle } from "drizzle-orm/neon-http";
 
 import * as schema from "@app/common/schemas";
 
@@ -25,7 +24,13 @@ import * as schema from "@app/common/schemas";
       inject: [ConfigService],
       useFactory: async (config: ConfigService) =>
         ({
-          url: config.get<string>("DATABASE_URL"),
+          url: `postgres://${config.get<string>(
+            "DATABASE_USER",
+          )}:${config.get<string>("DATABASE_PASSWORD")}@${config.get<string>(
+            "DATABASE_HOST",
+          )}/${config.get<string>(
+            "DATABASE_NAME",
+          )}?ssl=true&options=project%3D${config.get<string>("ENDPOINT_ID")}`,
           options: {
             schema,
             logger: config.get<string>("NODE_ENV") === "dev",
@@ -36,10 +41,11 @@ import * as schema from "@app/common/schemas";
       provide: getDrizzleInstanceToken(),
       inject: [getDrizzleConfigToken()],
       useFactory: async (drizzleConfig: DrizzleConfig) => {
-        neonConfig.fetchConnectionCache = true;
-        const sql = neon(drizzleConfig.url);
+        const client = new Client(drizzleConfig.url);
 
-        return drizzle(sql, drizzleConfig.options);
+        await client.connect();
+
+        return drizzle(client, drizzleConfig.options);
       },
     },
   ],

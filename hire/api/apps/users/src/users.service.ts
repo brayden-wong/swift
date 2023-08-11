@@ -14,6 +14,8 @@ export class UsersService {
     email = email.toLowerCase();
     password = await bcrypt.hash(password, 10);
 
+    console.log(email, password, restOfUserData);
+
     const user = await this.db
       .insert(UsersTable)
       .values({
@@ -22,6 +24,8 @@ export class UsersService {
         password,
       })
       .returning({ id: UsersTable.id });
+
+    console.log(user);
 
     return user;
   }

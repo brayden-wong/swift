@@ -1,7 +1,7 @@
-import { drizzle } from "drizzle-orm/neon-http";
-import { migrate } from "drizzle-orm/neon-http/migrator";
-import { neon, neonConfig } from "@neondatabase/serverless";
+import { drizzle } from "drizzle-orm/node-postgres";
+import { migrate } from "drizzle-orm/node-postgres/migrator";
 import { Logger } from "@nestjs/common";
+import { Client } from "pg";
 
 import * as dotenv from "dotenv";
 
@@ -12,14 +12,15 @@ const logger = new Logger("Migration");
 
 const main = async () => {
   logger.log("Starting Migration");
-  const connectionString = process.env.DATABASE_URL;
+  const connectionString = `postgres://${process.env.DATABASE_USER}:${process.env.DATABASE_PASSWORD}@${process.env.DATABASE_HOST}/${process.env.DATABASE_NAME}?ssl=true&options=project%3D${process.env.ENDPOINT_ID}`;
 
   if (!connectionString) throw new Error("DATABASE_URL is required");
 
-  neonConfig.fetchConnectionCache = true;
-  const sql = neon(connectionString);
+  const client = new Client(connectionString);
 
-  const db = drizzle(sql);
+  await client.connect();
+
+  const db = drizzle(client);
 
   await migrate(db, { migrationsFolder: "./.drizzle" });
 };

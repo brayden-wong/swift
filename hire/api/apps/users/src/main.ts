@@ -16,9 +16,6 @@ async function bootstrap() {
     },
   );
 
-  console.log(process.env.PORT);
-  console.log(process.env.HOST);
-
   logger.log(`Users listening internally @PORT:${process.env.PORT || 8082}`);
   await app.listen();
 }

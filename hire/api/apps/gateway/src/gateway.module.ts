@@ -1,6 +1,7 @@
 import { Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
 import { AuthModule } from "./modules";
+console.log(process.env.NODE_ENV);
 
 @Module({
   imports: [
