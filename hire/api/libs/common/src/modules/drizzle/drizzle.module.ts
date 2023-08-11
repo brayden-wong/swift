@@ -44,7 +44,6 @@ import * as schema from "@app/common/schemas";
       provide: getDrizzleInstanceToken(),
       inject: [getDrizzleConfigToken()],
       useFactory: async (drizzleConfig: DrizzleConfig) => {
-        console.log(drizzleConfig.url);
         neonConfig.fetchConnectionCache = true;
 
         const sql = neon(drizzleConfig.url);

@@ -1,5 +1,5 @@
-import { Controller, Get } from '@nestjs/common';
-import { CronService } from './cron.service';
+import { Controller, Get } from "@nestjs/common";
+import { CronService } from "./cron.service";
 
 @Controller()
 export class CronController {

@@ -1,9 +1,5 @@
 import { NestFactory } from "@nestjs/core";
-<<<<<<< HEAD
-import { AuthAppModule } from "./auth.app.module";
-=======
 import { AuthModule } from "./auth.module";
->>>>>>> api-main
 import { TcpClientOptions, Transport } from "@nestjs/microservices";
 import { Logger } from "@nestjs/common";
 
