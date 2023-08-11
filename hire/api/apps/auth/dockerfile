@@ -1,8 +1,5 @@
-<<<<<<< HEAD
-=======
 ARG NODE_ENV=dev
 
->>>>>>> api-main
 FROM node:alpine As development
 
 WORKDIR /usr/src/app
@@ -13,15 +10,9 @@ COPY package*.json ./
 
 RUN yarn install
 
-<<<<<<< HEAD
-RUN yarn build gateway
-
-FROM node:alpine as production
-=======
 RUN yarn build auth
 
 FROM node:alpine as prod
->>>>>>> api-main
 
 ARG NODE_ENV=production
 ENV NODE_ENV=${NODE_ENV}
