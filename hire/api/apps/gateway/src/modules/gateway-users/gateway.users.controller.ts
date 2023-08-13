@@ -1,5 +1,11 @@
 import { USERS_CONTROLLER } from "@app/common/constants/routes/users";
-import { Body, Controller, HttpCode, Post } from "@nestjs/common";
+import {
+  Body,
+  Controller,
+  HttpCode,
+  NotFoundException,
+  Post,
+} from "@nestjs/common";
 import { GatewayUsersService } from "./gateway.users.service";
 import { Public } from "@app/common/decorators";
 
@@ -11,7 +17,8 @@ export class GatewayUsersController {
   @HttpCode(200)
   @Post("public/credentials")
   async getUserPublicCredentials(@Body("email") email: string) {
-    console.log("endpoint hit");
-    return await this.usersService.getUserPublicCredentials(email);
+    const result = await this.usersService.getUserPublicCredentials(email);
+
+    return result ? result : "no user found";
   }
 }

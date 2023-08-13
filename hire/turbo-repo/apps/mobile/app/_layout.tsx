@@ -3,7 +3,6 @@ import { Stack } from "expo-router";
 export default () => {
   return (
     <Stack>
-      <Stack.Screen name="login" />
       <Stack.Screen
         name="index"
         options={{
@@ -11,10 +10,9 @@ export default () => {
         }}
       />
       <Stack.Screen
-        name="signup"
+        name="(tabs)"
         options={{
           headerShown: false,
-          presentation: "modal",
         }}
       />
     </Stack>

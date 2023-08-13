@@ -1,6 +1,8 @@
 export type RegisterUser = {
   id: string;
-  createdAt: Date;
+  name: string;
+  email: string;
+  avatar: string;
 };
 
 export type GetUserByEmail = {

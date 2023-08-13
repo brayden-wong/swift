@@ -30,7 +30,9 @@ export class UsersService {
 
     return {
       id: user.id,
-      createdAt: user.createdAt,
+      name: user.name,
+      email: user.email,
+      avatar: user.avatar,
     };
   }
 

@@ -4,7 +4,7 @@ import { firstValueFrom } from "rxjs";
 
 import { AUTH_SERVICE, LOGIN, REGISTER } from "@app/common/constants";
 import type { RegisterUserDto } from "@app/common/dto";
-import { GeneratedTokens, type RegisterUser } from "@app/common/return_types";
+import { Login, type RegisterUser } from "@app/common/return_types";
 import { WebOrMobile } from "@app/common/types";
 
 @Injectable()
@@ -21,9 +21,9 @@ export class GatewayAuthService {
   }
 
   login(data: { sub: string; type: WebOrMobile }) {
-    return this.authClient.send<
-      GeneratedTokens,
-      { sub: string; type: WebOrMobile }
-    >(LOGIN, data);
+    return this.authClient.send<Login, { sub: string; type: WebOrMobile }>(
+      LOGIN,
+      data,
+    );
   }
 }

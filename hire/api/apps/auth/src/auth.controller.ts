@@ -1,9 +1,4 @@
-import {
-  GENERATE_TOKENS,
-  LOGIN,
-  REGISTER,
-  VALIDATE_USER,
-} from "@app/common/constants";
+import { LOGIN, REGISTER, VALIDATE_USER } from "@app/common/constants";
 import { LoginUserDto, RegisterUserDto } from "@app/common/dto";
 import { Controller } from "@nestjs/common";
 import { MessagePattern, Payload } from "@nestjs/microservices";

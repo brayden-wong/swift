@@ -34,7 +34,7 @@ export class GatewayAuthController {
   @UseGuards(LocalGuard)
   @HttpCode(200)
   @Post(LOGIN)
-  login(@Sub() data: { sub: string }, @Body("type") type: WebOrMobile) {
-    return this.authService.login({ sub: data.sub, type });
+  login(@Sub() { sub }: { sub: string }, @Body("type") type: WebOrMobile) {
+    return this.authService.login({ sub, type });
   }
 }
