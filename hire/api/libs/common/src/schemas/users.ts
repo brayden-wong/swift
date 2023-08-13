@@ -12,6 +12,7 @@ import {
 import { FilesTable } from "./files";
 import { UsersAndApplicationsTable } from "./users.and.applications";
 import { ProfileTable } from "./profile";
+import { SessionsTable } from "./sessions";
 
 export const UsersRoleEnum = pgEnum("user_role", [
   "company_user",
@@ -53,5 +54,6 @@ export const UsersTableRelations = relations(UsersTable, ({ many, one }) => ({
     references: [ProfileTable.userId],
   }),
   files: many(FilesTable),
+  sessions: many(SessionsTable),
   usersAndApplications: many(UsersAndApplicationsTable),
 }));

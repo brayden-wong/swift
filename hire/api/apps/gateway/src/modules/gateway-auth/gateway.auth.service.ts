@@ -2,9 +2,10 @@ import { Inject, Injectable } from "@nestjs/common";
 import { ClientProxy } from "@nestjs/microservices";
 import { firstValueFrom } from "rxjs";
 
-import { AUTH_SERVICE, GENERATE_TOKENS, REGISTER } from "@app/common/constants";
+import { AUTH_SERVICE, LOGIN, REGISTER } from "@app/common/constants";
 import type { RegisterUserDto } from "@app/common/dto";
 import { GeneratedTokens, type RegisterUser } from "@app/common/return_types";
+import { WebOrMobile } from "@app/common/types";
 
 @Injectable()
 export class GatewayAuthService {
@@ -19,10 +20,10 @@ export class GatewayAuthService {
     );
   }
 
-  getGeneratedTokens(sub: { sub: string }) {
-    return this.authClient.send<GeneratedTokens, { sub: string }>(
-      GENERATE_TOKENS,
-      sub,
-    );
+  login(data: { sub: string; type: WebOrMobile }) {
+    return this.authClient.send<
+      GeneratedTokens,
+      { sub: string; type: WebOrMobile }
+    >(LOGIN, data);
   }
 }

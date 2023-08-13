@@ -8,6 +8,7 @@ export * from "./job.posts";
 export * from "./job.posts.and.skills";
 export * from "./profile";
 export * from "./profile.and.skills";
+export * from "./sessions";
 export * from "./skills";
 export * from "./users";
 export * from "./users.and.applications";

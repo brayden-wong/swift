@@ -11,6 +11,7 @@ async function bootstrap() {
   const PORT = config.get<number>("PORT");
 
   app.useGlobalFilters(new HttpExceptionFilter());
+  app.enableCors();
 
   await app.listen(PORT, async () =>
     logger.log(`Gateway is listening @${await app.getUrl()}`),

@@ -29,6 +29,6 @@
     "apps/mobile",
     "apps/web",
     "packages/config/*",
-    "packages/database"
+    "packages/types"
   ]
 }

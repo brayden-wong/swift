@@ -1,26 +1,35 @@
-import { Inject, Injectable } from "@nestjs/common";
+import {
+  forwardRef,
+  HttpException,
+  HttpStatus,
+  Inject,
+  Injectable,
+} from "@nestjs/common";
 import { ClientProxy } from "@nestjs/microservices";
-import { map } from "rxjs";
+import { firstValueFrom, map } from "rxjs";
 import { compareSync } from "bcryptjs";
-
-import { Database, InjectDrizzle } from "@app/common/modules";
-import { REGISTER, USERS_SERVICE, VALIDATE_USER } from "@app/common/constants";
-import type { LoginUserDto, RegisterUserDto } from "@app/common/dto";
-import type {
-  GeneratedTokens,
-  RegisterUser,
-  ValidateUser,
-} from "@app/common/return_types";
 import { JwtService } from "@nestjs/jwt";
 import { ConfigService } from "@nestjs/config";
+
+import { REGISTER, USERS_SERVICE, VALIDATE_USER } from "@app/common/constants";
+import type { LoginUserDto, RegisterUserDto } from "@app/common/dto";
+import {
+  GetUserById,
+  type GeneratedTokens,
+  type RegisterUser,
+  type ValidateUser,
+} from "@app/common/return_types";
+import { SessionsService } from "./sessions.service";
+import { Database, InjectDrizzle } from "@app/common/modules";
+import { GET_USER_BY_ID } from "@app/common/constants/routes/users";
 
 @Injectable()
 export class AuthService {
   constructor(
+    private readonly sessionsService: SessionsService,
     @Inject(ConfigService) private readonly config: ConfigService,
     @Inject(JwtService) private readonly jwtService: JwtService,
     @Inject(USERS_SERVICE) private readonly usersClient: ClientProxy,
-    @InjectDrizzle() private readonly db: Database,
   ) {}
 
   registerUser(registerUserDto: RegisterUserDto) {
@@ -28,6 +37,43 @@ export class AuthService {
       REGISTER,
       registerUserDto,
     );
+  }
+
+  async login(data: { sub: string; type: "web" | "mobile" }) {
+    const validSession = await this.sessionsService.validateSession(
+      data.type,
+      data.sub,
+    );
+
+    const { accessToken, refreshToken } = await this.generateTokens({
+      sub: data.sub,
+    });
+
+    const session = validSession
+      ? await this.sessionsService.updateSessionLogin({
+          type: data.type,
+          userId: data.sub,
+          newRefreshToken: refreshToken,
+        })
+      : await this.sessionsService.createSession({
+          type: data.type,
+          userId: data.sub,
+          refreshToken,
+        });
+
+    if (!session)
+      throw new HttpException(
+        "Failed to create session",
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+
+    const user = await firstValueFrom(
+      this.usersClient.send<GetUserById, { id: string }>(GET_USER_BY_ID, {
+        id: data.sub,
+      }),
+    );
+
+    return { accessToken, refreshToken, user };
   }
 
   validateUser(loginUserDto: LoginUserDto) {

@@ -19,3 +19,10 @@ export type ValidateUser = {
   id: string;
   password: string;
 };
+
+export type PublicCredentials = {
+  id: string;
+  name: string;
+  email: string;
+  avatar: string | null;
+};

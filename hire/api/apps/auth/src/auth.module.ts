@@ -8,7 +8,7 @@ import { USERS_SERVICE } from "@app/common/constants";
 import { DrizzleModule } from "@app/common/modules";
 
 import { AuthController } from "./auth.controller";
-import { AuthService } from "./auth.service";
+import { AuthService, SessionsService } from "./services";
 
 @Module({
   imports: [
@@ -32,6 +32,6 @@ import { AuthService } from "./auth.service";
     DrizzleModule,
   ],
   controllers: [AuthController],
-  providers: [AuthService],
+  providers: [AuthService, SessionsService],
 })
 export class AuthModule {}

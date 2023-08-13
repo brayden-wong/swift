@@ -14,6 +14,7 @@ import {
   type RegisterUserDto,
   RegistrationValidationSchema,
 } from "@app/common/dto";
+import type { WebOrMobile } from "@app/common/types";
 
 @Controller(AUTH_CONTROLLER)
 export class GatewayAuthController {
@@ -33,7 +34,7 @@ export class GatewayAuthController {
   @UseGuards(LocalGuard)
   @HttpCode(200)
   @Post(LOGIN)
-  login(@Sub() sub: { sub: string }) {
-    return this.authService.getGeneratedTokens(sub);
+  login(@Sub() data: { sub: string }, @Body("type") type: WebOrMobile) {
+    return this.authService.login({ sub: data.sub, type });
   }
 }
