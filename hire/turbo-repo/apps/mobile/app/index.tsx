@@ -1,11 +1,4 @@
-import {
-  Keyboard,
-  Text,
-  SafeAreaView,
-  View,
-  Pressable,
-  TextInput,
-} from "react-native";
+import { Keyboard, Text, View, Pressable, TextInput } from "react-native";
 import { Stack, useRouter } from "expo-router";
 import { Image } from "expo-image";
 import { z } from "zod";
@@ -17,21 +10,24 @@ import {
   useAnimationState,
 } from "moti";
 import { LoginBackdrop } from "@components/login.backdrop";
-import type { PublicCredentials } from "@swift/types";
 
-import axios from "axios";
 import {
   ChevronLeftIcon,
   EyeIcon,
   EyeSlashIcon,
   UserCircleIcon,
 } from "react-native-heroicons/solid";
+import { Profile, useAuth } from "@stores/index";
 
 const useTranslateScreen = () => {
   return useAnimationState({
     from: {
       translateY: 0,
     },
+    loginMoveUp: {
+      translateY: -75,
+    },
+
     registerMoveUpEmail: {
       translateY: -75,
     },
@@ -145,14 +141,6 @@ export default () => {
   const [step, setStep] = useState<
     "register-with-email" | "email" | "password" | "register-without-email"
   >("email");
-  const [publicCredentials, setPublicCredentials] = useState<PublicCredentials>(
-    {
-      id: "",
-      email: "",
-      name: "",
-      avatar: null,
-    },
-  );
   const router = useRouter();
 
   const translateScreen = useTranslateScreen();
@@ -161,6 +149,8 @@ export default () => {
   const translateRegisterFormWithEmail = useTranslateRegisterFormWithEmail();
   const translateRegisterFormWithoutEmail =
     useTranslateRegisterFormWithoutEmail();
+
+  const { profile, getMe, login, register } = useAuth();
 
   const handleContinue = async () => {
     Keyboard.dismiss();
@@ -197,24 +187,17 @@ export default () => {
   const handleEmailForm = async () => {
     if (email === "") return;
 
-    const response = await axios.post<PublicCredentials | string>(
-      "http://localhost:8080/users/public/credentials",
-      {
-        email: email.toLowerCase(),
-      },
-    );
+    const profile = await getMe(email.toLowerCase());
 
-    if (typeof response.data === "string") {
+    if (!profile) {
+      translateEmailForm.transitionTo("goTo");
       setStep("register-with-email");
       return;
     }
 
-    setPublicCredentials(response.data);
     setStep("password");
     return;
   };
-
-  const handleRegisterWithEmailForm = async () => {};
 
   const handleRegisterWithoutEmailForm = async () => {
     if (name === "" || email === "" || password === "") return;
@@ -225,20 +208,8 @@ export default () => {
     if (!passwordSchema.safeParse(password).success) return;
     if (!nameSchema.safeParse(name).success) return;
 
-    const response = await axios.post<PublicCredentials>(
-      "http://localhost:8080/auth/register",
-      {
-        name,
-        email: email.toLowerCase(),
-        password,
-      },
-    );
+    await register({ name, email, password });
 
-    if (response.status !== 201) {
-      return;
-    }
-
-    setPublicCredentials(response.data);
     translateRegisterFormWithoutEmail.transitionTo("from");
     translateRegisterFormWithEmail.transitionTo("from");
     setStep("password");
@@ -251,15 +222,7 @@ export default () => {
       return;
     }
 
-    const response = await axios.post("http://localhost:8080/auth/login", {
-      email,
-      password,
-      type: "mobile",
-    });
-
-    if (response.status !== 200) {
-      return;
-    }
+    await login({ email, password, type: "mobile" });
 
     router.replace("/home");
   };
@@ -277,6 +240,8 @@ export default () => {
     }
 
     if (step === "password") {
+      translateScreen.transitionTo("from");
+      Keyboard.dismiss();
       await handlePasswordForm();
       return;
     }
@@ -368,15 +333,18 @@ export default () => {
             handleSubmit={handleSubmit}
             animation={translateEmailForm}
           />
-          <RequestPassword
-            key={"password"}
-            credentials={publicCredentials}
-            password={password}
-            setPassword={setPassword}
-            handleContinue={handleContinue}
-            handleSubmit={handleSubmit}
-            animation={translatePasswordForm}
-          />
+          {profile && (
+            <RequestPassword
+              key={"password"}
+              profile={profile}
+              password={password}
+              setPassword={setPassword}
+              handleContinue={handleContinue}
+              handleSubmit={handleSubmit}
+              screenAnimation={translateScreen}
+              animation={translatePasswordForm}
+            />
+          )}
           <RequestUserWithOutEmail
             key={"register-without-email"}
             name={name}
@@ -510,7 +478,7 @@ const RequestUserWithOutEmail = ({
         type: "timing",
         duration: 400,
       }}
-      className="absolute top-1/2 z-50 h-3/5 w-[95%] rounded-tr-3xl bg-black/60 px-6 py-2   backdrop-blur-sm"
+      className="absolute top-1/2 z-50 h-3/5 w-[95%] rounded-tr-3xl bg-black/60 px-6 py-2"
     >
       <View className="flex w-full items-start justify-start space-y-3">
         <Pressable
@@ -644,7 +612,7 @@ const RequestUserWithEmail = ({
         type: "timing",
         duration: 400,
       }}
-      className="absolute top-1/2 z-50 h-3/5 w-[95%] rounded-tr-3xl bg-black/60 px-6 py-2   backdrop-blur-sm"
+      className="absolute top-1/2 z-50 h-3/5 w-[95%] rounded-tr-3xl bg-black/60 px-6 py-2"
     >
       <View className="flex w-full items-start justify-start space-y-3">
         <View className="flex space-y-1">
@@ -726,19 +694,21 @@ const RequestUserWithEmail = ({
 };
 
 type RequestPasswordProps = {
-  credentials: PublicCredentials;
+  profile: Profile;
   password: string;
   setPassword: React.Dispatch<React.SetStateAction<string>>;
   handleContinue: () => void;
   handleSubmit: () => Promise<void>;
+  screenAnimation: ReturnType<typeof useTranslateScreen>;
   animation: ReturnType<typeof useTranslatePasswordForm>;
 };
 const RequestPassword = ({
-  credentials,
+  profile,
   password,
   setPassword,
   handleContinue,
   handleSubmit,
+  screenAnimation,
   animation,
 }: RequestPasswordProps) => {
   const [showPassword, setShowPassword] = useState(true);
@@ -750,22 +720,22 @@ const RequestPassword = ({
         type: "timing",
         duration: 400,
       }}
-      className="absolute bottom-0 z-50 h-3/5 w-[95%] rounded-tr-3xl bg-black/60 px-6 py-2   backdrop-blur-sm"
+      className="absolute bottom-0 z-50 h-3/5 w-[95%] rounded-tr-3xl bg-black/60 px-6 py-2"
     >
       <View className="flex flex-row items-center justify-start space-x-2">
-        {credentials.avatar === null ? (
+        {profile.avatar === null ? (
           <UserCircleIcon color="#f5f5f5" className="rounded-full" size={48} />
         ) : (
           <Image
             source={{
-              uri: credentials.avatar,
+              uri: profile.avatar,
             }}
             className="h-12 w-12 rounded-full"
           />
         )}
         <View className="flex flex-col items-start justify-start space-y-0.5 py-2">
-          <Text className="text-white">{credentials.name}</Text>
-          <Text className="text-sm text-white">{credentials.email}</Text>
+          <Text className="text-white">{profile.name}</Text>
+          <Text className="text-sm text-white">{profile.email}</Text>
         </View>
       </View>
       <View className="flex space-y-4">
@@ -784,7 +754,7 @@ const RequestPassword = ({
               value={password}
               onChangeText={setPassword}
               onFocus={() => {
-                animation.transitionTo("raise");
+                screenAnimation.transitionTo("loginMoveUp");
               }}
               onSubmitEditing={handleSubmit}
             />

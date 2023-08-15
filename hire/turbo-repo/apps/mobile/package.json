@@ -2,9 +2,9 @@
   "name": "@swift/mobile",
   "version": "1.0.0",
   "scripts": {
-    "start": "NODE_ENV=development expo start -c",
-    "android": "NODE_ENV=development expo start -c --android",
-    "ios": "NODE_ENV=development expo start -c --ios"
+    "start": "NODE_ENV=dev expo start -c",
+    "android": "NODE_ENV=dev expo start -c --android",
+    "ios": "NODE_ENV=dev expo start -c --ios"
   },
   "dependencies": {
     "@babel/plugin-proposal-export-namespace-from": "^7.18.9",
@@ -23,6 +23,7 @@
     "expo-router": "^1.5.2",
     "expo-splash-screen": "~0.18.2",
     "expo-status-bar": "~1.4.4",
+    "expo-storage": "^48.1.0",
     "expo-system-ui": "~2.2.1",
     "expo-web-browser": "~12.1.1",
     "moti": "^0.26.0",

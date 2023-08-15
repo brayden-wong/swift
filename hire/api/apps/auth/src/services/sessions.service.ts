@@ -5,6 +5,7 @@ import { CreateSessionDto, UpdateSessionLoginDto } from "@app/common/dto";
 import { compare, hash } from "bcryptjs";
 import { SessionsTable } from "@app/common/schemas";
 import { and, eq, sql } from "drizzle-orm";
+import { WebOrMobile } from "@app/common/types";
 
 @Injectable()
 export class SessionsService {
@@ -51,6 +52,25 @@ export class SessionsService {
     return updatedSession;
   }
 
+  async updateRefreshToken(
+    userId: string,
+    type: WebOrMobile,
+    refreshToken: string,
+  ) {
+    const hashedToken = await hash(refreshToken, 10);
+    const expiration = await this.generateExpiration();
+    await this.db
+      .update(SessionsTable)
+      .set({
+        refreshToken: hashedToken,
+        expiration,
+        updatedAt: sql`CURRENT_TIMESTAMP`,
+      })
+      .where(
+        and(eq(SessionsTable.userId, userId), eq(SessionsTable.type, type)),
+      );
+  }
+
   async validateSession(type: "web" | "mobile", userId: string) {
     const session = await this.db.query.SessionsTable.findFirst({
       where: and(
@@ -62,6 +82,23 @@ export class SessionsService {
     if (session && session.expiration < new Date()) return false;
 
     return session ? true : false;
+  }
+
+  async validateRefreshToken(
+    refreshToken: string,
+    type: WebOrMobile,
+    userId: string,
+  ) {
+    const session = await this.db.query.SessionsTable.findFirst({
+      where: and(
+        eq(SessionsTable.userId, userId),
+        eq(SessionsTable.type, type),
+      ),
+    });
+
+    if (!session) throw new UnauthorizedException("Invalid Session");
+
+    return await compare(refreshToken, session.refreshToken);
   }
 
   private async generateExpiration() {

@@ -15,7 +15,7 @@ export class GatewayUsersController {
 
   @Public()
   @HttpCode(200)
-  @Post("public/credentials")
+  @Post("me")
   async getUserPublicCredentials(@Body("email") email: string) {
     const result = await this.usersService.getUserPublicCredentials(email);
 

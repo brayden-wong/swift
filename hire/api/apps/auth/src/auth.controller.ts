@@ -1,5 +1,14 @@
-import { LOGIN, REGISTER, VALIDATE_USER } from "@app/common/constants";
-import { LoginUserDto, RegisterUserDto } from "@app/common/dto";
+import {
+  LOGIN,
+  REFRESH_TOKENS,
+  REGISTER,
+  VALIDATE_USER,
+} from "@app/common/constants";
+import {
+  LoginUserDto,
+  RefreshTokenDto,
+  RegisterUserDto,
+} from "@app/common/dto";
 import { Controller } from "@nestjs/common";
 import { MessagePattern, Payload } from "@nestjs/microservices";
 import { AuthService } from "./services";
@@ -22,5 +31,10 @@ export class AuthController {
   @MessagePattern(LOGIN)
   async generateTokens(@Payload() data: { sub: string; type: WebOrMobile }) {
     return this.authService.login(data);
+  }
+
+  @MessagePattern(REFRESH_TOKENS)
+  async refreshTokens(@Payload() refreshTokenDto: RefreshTokenDto) {
+    return this.authService.refreshTokens(refreshTokenDto);
   }
 }

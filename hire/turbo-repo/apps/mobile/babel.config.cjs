@@ -9,12 +9,7 @@ module.exports = function (api) {
         "module:react-native-dotenv",
         {
           moduleName: "@env",
-          path:
-            process.env.NODE_ENV === "development"
-              ? `.env.development`
-              : process.env.NODE_ENV === "school"
-              ? `.env.school`
-              : `.env.production`,
+          path: `.env.local.${process.env.NODE_ENV}`,
           blacklist: null,
           whitelist: null,
           safe: true,

@@ -12,7 +12,11 @@ import { JwtService } from "@nestjs/jwt";
 import { ConfigService } from "@nestjs/config";
 
 import { REGISTER, USERS_SERVICE, VALIDATE_USER } from "@app/common/constants";
-import type { LoginUserDto, RegisterUserDto } from "@app/common/dto";
+import type {
+  LoginUserDto,
+  RefreshTokenDto,
+  RegisterUserDto,
+} from "@app/common/dto";
 import {
   GetUserById,
   type GeneratedTokens,
@@ -22,6 +26,7 @@ import {
 import { SessionsService } from "./sessions.service";
 import { Database, InjectDrizzle } from "@app/common/modules";
 import { GET_USER_BY_ID } from "@app/common/constants/routes/users";
+import { WebOrMobile } from "@app/common/types";
 
 @Injectable()
 export class AuthService {
@@ -39,15 +44,13 @@ export class AuthService {
     );
   }
 
-  async login(data: { sub: string; type: "web" | "mobile" }) {
+  async login(data: { sub: string; type: WebOrMobile }) {
     const validSession = await this.sessionsService.validateSession(
       data.type,
       data.sub,
     );
 
-    const { accessToken, refreshToken } = await this.generateTokens({
-      sub: data.sub,
-    });
+    const { accessToken, refreshToken } = await this.generateTokens(data);
 
     const session = validSession
       ? await this.sessionsService.updateSessionLogin({
@@ -93,17 +96,43 @@ export class AuthService {
       );
   }
 
-  async generateTokens(sub: { sub: string }): Promise<GeneratedTokens> {
+  async generateTokens(data: {
+    sub: string;
+    type: WebOrMobile;
+  }): Promise<GeneratedTokens> {
     const [accessToken, refreshToken] = await Promise.all([
-      this.jwtService.sign(sub, {
+      this.jwtService.sign(data, {
         secret: this.config.get<string>("AT_SECRET"),
         expiresIn: this.config.get<string>("AT_EXPIRES_IN"),
       }),
-      this.jwtService.sign(sub, {
+      this.jwtService.sign(data, {
         secret: this.config.get<string>("RT_SECRET"),
         expiresIn: this.config.get<string>("RT_EXPIRES_IN"),
       }),
     ]);
+
+    return { accessToken, refreshToken } as const;
+  }
+
+  async refreshTokens(refreshTokenDto: RefreshTokenDto) {
+    const { rt, sub, type } = refreshTokenDto;
+
+    const validSession = await this.sessionsService.validateRefreshToken(
+      rt,
+      type,
+      sub,
+    );
+
+    if (!validSession) {
+      throw new HttpException("Invalid refresh token", HttpStatus.UNAUTHORIZED);
+    }
+
+    const { accessToken, refreshToken } = await this.generateTokens({
+      sub,
+      type,
+    });
+
+    await this.sessionsService.updateRefreshToken(sub, type, refreshToken);
 
     return { accessToken, refreshToken } as const;
   }

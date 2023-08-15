@@ -1,6 +1,6 @@
 import { Tabs } from "expo-router";
 
-export const AppLayout = () => {
+export default () => {
   return (
     <Tabs>
       <Tabs.Screen
@@ -9,7 +9,7 @@ export const AppLayout = () => {
           headerShown: false,
         }}
       />
-      <Tabs.Screen name="settings" />
+      <Tabs.Screen name="profile" />
     </Tabs>
   );
 };

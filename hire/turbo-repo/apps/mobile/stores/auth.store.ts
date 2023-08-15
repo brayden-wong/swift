@@ -1,146 +1,112 @@
 import { create } from "zustand";
-import { API_URL } from "@env";
+import Storage from "expo-storage";
 import axios from "axios";
-import type { Login, Response } from "@utils/types";
 
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useEffect, useState } from "react";
+import { User, LoggedIn, GeneratedTokens } from "@swift/types";
+import { API_URL } from "@env";
 
-type OAuth = {
-  at: string;
-  rt: string;
-  user: {
-    id: string;
-    username: string;
-    name: string;
-    email?: string;
-  };
+export type Profile = {
+  id: string;
+  name: string;
+  email: string;
+  avatar: string;
+};
+
+export type Credentials = {
+  email: string;
+  password: string;
+  type: "mobile";
+};
+
+export type Register = {
+  name: string;
+  email: string;
+  password: string;
 };
 
 export type AuthStore = {
-  at: () => string;
-  rt: () => string;
-  setAt: (at: string) => Promise<void>;
-  setRt: (rt: string) => Promise<void>;
-  user?: {
-    id: string;
-    username: string;
-    name: string;
-    email?: string;
-  } | null;
-  login: (username: string, password: string) => Promise<{ success: boolean }>;
-  oauthLogin: ({ at, rt, user }: OAuth) => Promise<void>;
-  logout: () => Promise<void>;
-  refreshTokens: () => Promise<void>;
+  profile: Profile | null;
+  setProfile: (profile: Profile) => void;
+  user: User | null;
+  setUser: (user: User) => void;
+  getTokens: () => Promise<GeneratedTokens>;
+  setTokens: (tokens: GeneratedTokens) => void;
+  clearTokens: () => Promise<void>;
+  getMe: (email: string) => Promise<Profile | null>;
+  register: (credentials: Register) => Promise<void>;
+  login: (credentials: Credentials) => Promise<void>;
+  logout: () => void;
 };
 
-export const useAuthStore = create<AuthStore>((set, get) => ({
-  at: () => {
-    const [at, setAt] = useState("");
-
-    useEffect(() => {
-      const getAt = async () => {
-        setAt((await AsyncStorage.getItem("at")) ?? "");
-      };
-
-      getAt();
-    });
-
-    return at;
-  },
-  rt: () => {
-    const [rt, setRt] = useState("");
-
-    useEffect(() => {
-      const getRt = async () => {
-        setRt((await AsyncStorage.getItem("rt")) ?? "");
-      };
-
-      getRt();
-    });
-
-    return rt;
-  },
-  setAt: async (at) => AsyncStorage.setItem("at", at),
-  setRt: async (rt) => AsyncStorage.setItem("rt", rt),
+export const useAuth = create<AuthStore>((set, get) => ({
+  profile: null,
+  setProfile: (profile) => set({ profile }),
   user: null,
-  login: async (username, password) => {
-    const { data } = await axios.post<Response<Login>>(
+  setUser: (user) => set({ user }),
+  getTokens: async () => {
+    const accessToken = await Storage.getItem({ key: "access_token" });
+    const refreshToken = await Storage.getItem({ key: "refresh_token" });
+
+    if (!accessToken || !refreshToken) {
+      throw new Error("No tokens found");
+    }
+
+    return { accessToken, refreshToken } as const;
+  },
+  setTokens: async ({ accessToken, refreshToken }) => {
+    await Promise.all([
+      await Storage.setItem({ key: "access_token", value: accessToken }),
+      await Storage.setItem({ key: "refresh_token", value: refreshToken }),
+    ]);
+  },
+  clearTokens: async () => {
+    await Promise.all([
+      Storage.removeItem({ key: "access_token" }),
+      Storage.removeItem({ key: "refresh_token" }),
+    ]);
+  },
+  getMe: async (email) => {
+    const response = await axios.post(`${API_URL}/users/me`, {
+      email: email.toLowerCase(),
+    });
+
+    if (typeof response.data === "string") return null;
+
+    const { setProfile } = get();
+
+    setProfile(response.data);
+
+    return response.data;
+  },
+  register: async (credentials) => {
+    const response = await axios.post<Profile>(
+      `${API_URL}/auth/register`,
+      credentials,
+    );
+
+    if (response.status !== 201) throw new Error("Failed to register user");
+
+    const { setProfile } = get();
+    setProfile(response.data);
+  },
+  login: async (credentials) => {
+    const response = await axios.post<LoggedIn>(
       `${API_URL}/auth/login`,
-      {
-        username,
-        password,
-      },
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-      },
+      credentials,
     );
 
-    if (data.status === "ok") {
-      const { at, rt, user } = data.data;
-      const { setAt, setRt } = get();
-      await Promise.all([setAt(at), setRt(rt)]);
-      set({
-        user,
-      });
-
-      await new Promise((resolve) => {
-        AsyncStorage.setItem("at", at);
-        AsyncStorage.setItem("rt", rt);
-        resolve(true);
-      });
-
-      return { success: true };
+    if (response.status !== 200) {
+      throw new Error("Login failed");
     }
+    const { setUser, setTokens } = get();
+    const { accessToken, refreshToken, user } = response.data;
 
-    return { success: false, message: data.message };
+    setUser(user);
+    setTokens({ accessToken, refreshToken });
   },
-  oauthLogin: async ({ at, rt, user: currentUser }) => {
-    const { setAt, setRt } = get();
-    await Promise.all([setAt(at), setRt(rt)]);
-    set({
-      user: {
-        ...currentUser,
-        email: currentUser?.email ?? "",
-      },
-    });
-
-    await new Promise((resolve) => {
-      AsyncStorage.setItem("at", at);
-      AsyncStorage.setItem("rt", rt);
-      resolve(true);
-    });
-  },
-  logout: async () => {},
-  refreshTokens: async () => {
-    const rt = await AsyncStorage.getItem("rt");
-    const { data } = await axios.patch<Response<Login>>(
-      `${API_URL}/auth/refresh`,
-      {},
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-          Authorization: `Bearer ${rt}`,
-        },
-      },
-    );
-
-    if (data.status === "ok") {
-      const { at, rt, user: currentUser } = data.data;
-      const { oauthLogin } = get();
-
-      oauthLogin({
-        at,
-        rt,
-        user: {
-          ...currentUser,
-          email: currentUser?.email ?? "",
-        },
-      });
-    }
+  logout: () => {
+    const { clearTokens } = get();
+    clearTokens();
+    set({ user: null, profile: null });
   },
 }));

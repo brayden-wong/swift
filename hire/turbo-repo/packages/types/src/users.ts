@@ -26,3 +26,15 @@ export type PublicCredentials = {
   email: string;
   avatar: string | null;
 };
+
+export type User = {
+  email: string;
+  name: string;
+  avatar: string;
+  role: "standard_user" | "company_user";
+  boosts: number;
+  createdAt: Date;
+  updatedAt: Date;
+  id: string;
+  firstTimeLogin: boolean;
+}

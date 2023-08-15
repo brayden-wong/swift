@@ -1,12 +1,15 @@
+import { WebOrMobile } from "./web.or.mobile";
+
 export type Token = {
-  id: string;
+  sub: string;
   iat: number;
   exp: number;
 };
 
 export type RefreshToken = {
   rt: string;
-  id: string;
+  type: WebOrMobile;
+  sub: string;
   iat: number;
   exp: number;
 };
