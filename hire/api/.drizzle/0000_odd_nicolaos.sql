@@ -5,6 +5,18 @@ EXCEPTION
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
+ CREATE TYPE "session_type" AS ENUM('web', 'mobile');
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ CREATE TYPE "skills_name_enum" AS ENUM('JavaScript', 'TypeScript', 'NestJs', 'TailwindCss', 'NextJs', 'ReactJs', 'prisma', 'drizzle-orm', 'PostgreSQL', 'MySQL', 'Sqlite', 'MongoDB', 'Redis', 'Firebase', 'Supabase', 'GraphQL', 'Apollo', 'Hasura', 'CockroachDB', 'FaunaDB', 'ScyllaDB', 'ReactNative', 'VueJs', 'Angular', 'Angular 2', 'Qwik', 'Svelte', 'Svelte Kit', 'NuxtJs', 'Express', 'Remix Js', 'Deno', 'other', 'solid Js', 'solid start', 'NodeJs', 'C', 'C++', 'C#', 'ASP .Net', 'Entity Framework', 'Springboot', 'Maven', 'Gradle', 'Java', 'Python', 'Django', 'Flask', 'FastAPI', 'Ruby on Rails', 'Laravel', 'Ruby', 'PHP', 'SQL', 'HTML', 'CSS', 'Swift', 'Kotlin', 'Go', 'Rust', 'Scala', 'Perl', 'Haskell', 'Lua', 'R', 'Matlab', 'Assembly', 'Objective-C', 'Visual Basic', 'Dart', 'Elixir', 'Clojure', 'Groovy', 'Julia', 'F#', 'Erlang', 'Bash', 'PowerShell', 'OCaml', 'Scheme', 'VimL', 'Apex', 'Arduino', 'Crystal', 'D', 'Docker', 'Kubernetes', 'Helm', 'Git', 'Jira', 'Trello', 'Nim', 'Pascal');
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
  CREATE TYPE "user_role" AS ENUM('company_user', 'standard_user');
 EXCEPTION
  WHEN duplicate_object THEN null;
@@ -79,10 +91,20 @@ CREATE TABLE IF NOT EXISTS "users_and_skills" (
 	CONSTRAINT users_and_skills_profile_id_skill_id PRIMARY KEY("profile_id","skill_id")
 );
 --> statement-breakpoint
+CREATE TABLE IF NOT EXISTS "sessions" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"type" "session_type" NOT NULL,
+	"refresh_token" text NOT NULL,
+	"expiration" timestamp NOT NULL,
+	"user_id" uuid NOT NULL,
+	"created_at" timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
+	"updated_at" timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+--> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "skills" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-	"skill_name" text NOT NULL,
-	CONSTRAINT "skills_skill_name_unique" UNIQUE("skill_name")
+	"skill_name" "skills_name_enum" NOT NULL,
+	"other_name" text
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "users" (
@@ -205,6 +227,12 @@ END $$;
 --> statement-breakpoint
 DO $$ BEGIN
  ALTER TABLE "users_and_skills" ADD CONSTRAINT "users_and_skills_skill_id_skills_id_fk" FOREIGN KEY ("skill_id") REFERENCES "skills"("id") ON DELETE no action ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "sessions" ADD CONSTRAINT "sessions_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE no action ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;

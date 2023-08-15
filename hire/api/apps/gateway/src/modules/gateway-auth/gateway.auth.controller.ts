@@ -1,5 +1,6 @@
 import {
   AUTH_CONTROLLER,
+  HEALTH_CHECK,
   LOGIN,
   REFRESH_TOKENS,
   REGISTER,
@@ -7,6 +8,7 @@ import {
 import {
   Body,
   Controller,
+  Get,
   HttpCode,
   Post,
   UseGuards,
@@ -20,10 +22,18 @@ import {
   RegistrationValidationSchema,
 } from "@app/common/dto";
 import type { RefreshToken, WebOrMobile } from "@app/common/types";
+import type { Observable } from "rxjs";
+import type { HealthCheck } from "@app/common/return_types";
 
 @Controller(AUTH_CONTROLLER)
 export class GatewayAuthController {
   constructor(private readonly authService: GatewayAuthService) {}
+
+  @Public()
+  @Get(HEALTH_CHECK)
+  getHealthCheck(): Observable<HealthCheck> {
+    return this.authService.getHealthCheck();
+  }
 
   @Public()
   @UsePipes(RegistrationValidationSchema)

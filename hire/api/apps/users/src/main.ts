@@ -16,7 +16,9 @@ async function bootstrap() {
     },
   );
 
-  logger.log(`Users listening internally @PORT:${process.env.PORT || 8082}`);
+  logger.log(
+    `Users Microservice is listening on ${process.env.HOST}@${process.env.PORT}`,
+  );
   await app.listen();
 }
 bootstrap();

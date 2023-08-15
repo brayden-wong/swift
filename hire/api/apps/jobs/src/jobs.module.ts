@@ -1,10 +1,18 @@
 import { Module } from "@nestjs/common";
-import { JobsController } from "./jobs.controller";
-import { JobsService } from "./jobs.service";
+import { ConfigModule } from "@nestjs/config";
+import { DrizzleModule } from "@app/common/modules";
+import { JobsController, SkillsController } from "./controllers";
+import { JobsService, SkillsService } from "./services";
 
 @Module({
-  imports: [],
-  controllers: [JobsController],
-  providers: [JobsService],
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: `.env.local.${process.env.NODE_ENV}`,
+    }),
+    DrizzleModule,
+  ],
+  controllers: [JobsController, SkillsController],
+  providers: [JobsService, SkillsService],
 })
 export class JobsModule {}

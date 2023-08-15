@@ -1,9 +1,9 @@
-import { USERS_SERVICE } from "@app/common/constants";
+import { HEALTH_CHECK, USERS_SERVICE } from "@app/common/constants";
 import {
   GET_USER_BY_EMAIL,
   GET_USER_PUBLIC_CREDENTIALS,
 } from "@app/common/constants/routes/users";
-import { PublicCredentials } from "@app/common/return_types";
+import { HealthCheck, PublicCredentials } from "@app/common/return_types";
 import { Inject, Injectable } from "@nestjs/common";
 import { ClientProxy } from "@nestjs/microservices";
 import { firstValueFrom } from "rxjs";
@@ -14,6 +14,10 @@ export class GatewayUsersService {
     @Inject(USERS_SERVICE)
     private readonly usersClient: ClientProxy,
   ) {}
+
+  getHealthCheck() {
+    return this.usersClient.send<HealthCheck, {}>(HEALTH_CHECK, {});
+  }
 
   async getUserPublicCredentials(email: string) {
     return await firstValueFrom(

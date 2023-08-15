@@ -16,7 +16,9 @@ async function bootstrap() {
     },
   );
 
-  logger.log(`Auth listening internally @PORT:${process.env.PORT || 8081}`);
+  logger.log(
+    `Auth Microservice is listening on ${process.env.HOST}@${process.env.PORT}`,
+  );
   await app.listen();
 }
 bootstrap();

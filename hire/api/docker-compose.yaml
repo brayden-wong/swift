@@ -18,6 +18,7 @@ services:
       - swift_hire
     ports:
       - 8080:8080
+
   auth:
     build:
       context: .
@@ -44,6 +45,22 @@ services:
       - NODE_ENV=docker
     env_file:
       - ./apps/users/.env.local.docker
+    volumes:
+      - ./:/usr/src/app
+      - /usr/src/app/node_modules
+    networks:
+      - swift_hire
+
+  jobs:
+    build:
+      context: .
+      dockerfile: ./apps/jobs/dockerfile
+      target: development
+    command: yarn start:dev jobs
+    environment:
+      - NODE_ENV=docker
+    env_file:
+      - ./apps/jobs/.env.local.docker
     volumes:
       - ./:/usr/src/app
       - /usr/src/app/node_modules

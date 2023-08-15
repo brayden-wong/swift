@@ -1,7 +1,7 @@
 {
   "version": "5",
   "dialect": "pg",
-  "id": "a8b0fcc9-5538-40ae-a69c-5486c65fe5cb",
+  "id": "701dc256-7325-42cc-8d48-80733f50ea76",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "applications_and_files": {
@@ -586,6 +586,75 @@
       },
       "uniqueConstraints": {}
     },
+    "sessions": {
+      "name": "sessions",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "type": {
+          "name": "type",
+          "type": "session_type",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "refresh_token": {
+          "name": "refresh_token",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "expiration": {
+          "name": "expiration",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "CURRENT_TIMESTAMP"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "CURRENT_TIMESTAMP"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "sessions_user_id_users_id_fk": {
+          "name": "sessions_user_id_users_id_fk",
+          "tableFrom": "sessions",
+          "tableTo": "users",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
     "skills": {
       "name": "skills",
       "schema": "",
@@ -599,23 +668,21 @@
         },
         "skill_name": {
           "name": "skill_name",
-          "type": "text",
+          "type": "skills_name_enum",
           "primaryKey": false,
           "notNull": true
+        },
+        "other_name": {
+          "name": "other_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
         }
       },
       "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {
-        "skills_skill_name_unique": {
-          "name": "skills_skill_name_unique",
-          "nullsNotDistinct": false,
-          "columns": [
-            "skill_name"
-          ]
-        }
-      }
+      "uniqueConstraints": {}
     },
     "users": {
       "name": "users",
@@ -864,6 +931,111 @@
         "contractor": "contractor",
         "other": "other",
         "--": "--"
+      }
+    },
+    "session_type": {
+      "name": "session_type",
+      "values": {
+        "web": "web",
+        "mobile": "mobile"
+      }
+    },
+    "skills_name_enum": {
+      "name": "skills_name_enum",
+      "values": {
+        "JavaScript": "JavaScript",
+        "TypeScript": "TypeScript",
+        "NestJs": "NestJs",
+        "TailwindCss": "TailwindCss",
+        "NextJs": "NextJs",
+        "ReactJs": "ReactJs",
+        "prisma": "prisma",
+        "drizzle-orm": "drizzle-orm",
+        "PostgreSQL": "PostgreSQL",
+        "MySQL": "MySQL",
+        "Sqlite": "Sqlite",
+        "MongoDB": "MongoDB",
+        "Redis": "Redis",
+        "Firebase": "Firebase",
+        "Supabase": "Supabase",
+        "GraphQL": "GraphQL",
+        "Apollo": "Apollo",
+        "Hasura": "Hasura",
+        "CockroachDB": "CockroachDB",
+        "FaunaDB": "FaunaDB",
+        "ScyllaDB": "ScyllaDB",
+        "ReactNative": "ReactNative",
+        "VueJs": "VueJs",
+        "Angular": "Angular",
+        "Angular 2": "Angular 2",
+        "Qwik": "Qwik",
+        "Svelte": "Svelte",
+        "Svelte Kit": "Svelte Kit",
+        "NuxtJs": "NuxtJs",
+        "Express": "Express",
+        "Remix Js": "Remix Js",
+        "Deno": "Deno",
+        "other": "other",
+        "solid Js": "solid Js",
+        "solid start": "solid start",
+        "NodeJs": "NodeJs",
+        "C": "C",
+        "C++": "C++",
+        "C#": "C#",
+        "ASP .Net": "ASP .Net",
+        "Entity Framework": "Entity Framework",
+        "Springboot": "Springboot",
+        "Maven": "Maven",
+        "Gradle": "Gradle",
+        "Java": "Java",
+        "Python": "Python",
+        "Django": "Django",
+        "Flask": "Flask",
+        "FastAPI": "FastAPI",
+        "Ruby on Rails": "Ruby on Rails",
+        "Laravel": "Laravel",
+        "Ruby": "Ruby",
+        "PHP": "PHP",
+        "SQL": "SQL",
+        "HTML": "HTML",
+        "CSS": "CSS",
+        "Swift": "Swift",
+        "Kotlin": "Kotlin",
+        "Go": "Go",
+        "Rust": "Rust",
+        "Scala": "Scala",
+        "Perl": "Perl",
+        "Haskell": "Haskell",
+        "Lua": "Lua",
+        "R": "R",
+        "Matlab": "Matlab",
+        "Assembly": "Assembly",
+        "Objective-C": "Objective-C",
+        "Visual Basic": "Visual Basic",
+        "Dart": "Dart",
+        "Elixir": "Elixir",
+        "Clojure": "Clojure",
+        "Groovy": "Groovy",
+        "Julia": "Julia",
+        "F#": "F#",
+        "Erlang": "Erlang",
+        "Bash": "Bash",
+        "PowerShell": "PowerShell",
+        "OCaml": "OCaml",
+        "Scheme": "Scheme",
+        "VimL": "VimL",
+        "Apex": "Apex",
+        "Arduino": "Arduino",
+        "Crystal": "Crystal",
+        "D": "D",
+        "Docker": "Docker",
+        "Kubernetes": "Kubernetes",
+        "Helm": "Helm",
+        "Git": "Git",
+        "Jira": "Jira",
+        "Trello": "Trello",
+        "Nim": "Nim",
+        "Pascal": "Pascal"
       }
     },
     "user_role": {

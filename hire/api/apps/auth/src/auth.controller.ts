@@ -1,4 +1,5 @@
 import {
+  HEALTH_CHECK,
   LOGIN,
   REFRESH_TOKENS,
   REGISTER,
@@ -13,10 +14,19 @@ import { Controller } from "@nestjs/common";
 import { MessagePattern, Payload } from "@nestjs/microservices";
 import { AuthService } from "./services";
 import { WebOrMobile } from "@app/common/types";
+import { HealthCheck } from "@app/common/return_types";
 
 @Controller()
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
+
+  @MessagePattern(HEALTH_CHECK)
+  getHealthCheck(): HealthCheck {
+    return {
+      name: "Auth Microservice",
+      status: "ok",
+    };
+  }
 
   @MessagePattern(REGISTER)
   registerUser(@Payload() registerUserDto: RegisterUserDto) {
