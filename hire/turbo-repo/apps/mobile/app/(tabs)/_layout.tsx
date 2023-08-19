@@ -1,4 +1,4 @@
-import { useAuth } from "@stores/index";
+import { useAuth } from "@stores/auth.store";
 import { Stack, Tabs, Redirect } from "expo-router";
 import { useEffect } from "react";
 

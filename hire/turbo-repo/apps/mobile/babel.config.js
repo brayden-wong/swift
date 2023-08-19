@@ -19,7 +19,6 @@ module.exports = function (api) {
       [
         "module-resolver",
         {
-          root: ["./"],
           alias: {
             "@components": "./components",
             "@hooks": "./hooks",
@@ -27,6 +26,7 @@ module.exports = function (api) {
             "@stores": "./stores",
             "@utils": "./utils",
           },
+          extensions: [".ts", ".tsx"],
         },
       ],
       "@babel/plugin-proposal-export-namespace-from",

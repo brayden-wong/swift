@@ -3,14 +3,14 @@
   "compilerOptions": {
     "strict": true,
     "jsx": "react-native",
-    "baseUrl": "./",
+    "baseUrl": ".",
     "paths": {
-      "@screens/*": ["./app/*"],
       "@hooks/*": ["./hooks/*"],
       "@components/*": ["./components/*"],
       "@stores/*": ["./stores/*"],
       "@utils/*": ["./utils/*"]
     },
     "types": ["nativewind/types"]
-  }
+  },
+  "include": ["./**/*"]
 }

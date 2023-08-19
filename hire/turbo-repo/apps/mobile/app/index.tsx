@@ -17,7 +17,7 @@ import {
   EyeSlashIcon,
   UserCircleIcon,
 } from "react-native-heroicons/solid";
-import { Profile, useAuth } from "@stores/index";
+import { Profile, useAuth } from "@stores/auth.store";
 
 const useTranslateScreen = () => {
   return useAnimationState({
