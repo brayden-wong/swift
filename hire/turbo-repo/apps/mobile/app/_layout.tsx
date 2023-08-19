@@ -2,7 +2,8 @@ import { useAuth } from "@stores/auth.store";
 import { Stack } from "expo-router";
 
 export default () => {
-  const {} = useAuth();
+  const { user } = useAuth();
+
   return (
     <Stack>
       <Stack.Screen
@@ -15,6 +16,14 @@ export default () => {
         name="(tabs)"
         options={{
           headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="onboarding"
+        options={{
+          presentation: "modal",
+          gestureEnabled: false,
+          title: "My Profile",
         }}
       />
     </Stack>

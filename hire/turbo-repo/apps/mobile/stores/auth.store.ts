@@ -34,7 +34,7 @@ export type AuthStore = {
   clearTokens: () => Promise<void>;
   getMe: (email: string) => Promise<Profile | null>;
   register: (credentials: Register) => Promise<void>;
-  login: (credentials: Credentials) => Promise<void>;
+  login: (credentials: Credentials) => Promise<User>;
   logout: () => void;
 };
 
@@ -103,6 +103,8 @@ export const useAuth = create<AuthStore>((set, get) => ({
 
     setUser(user);
     setTokens({ accessToken, refreshToken });
+
+    return user;
   },
   logout: () => {
     const { clearTokens } = get();
