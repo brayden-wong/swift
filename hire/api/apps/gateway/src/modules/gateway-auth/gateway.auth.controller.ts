@@ -15,7 +15,7 @@ import {
   UsePipes,
 } from "@nestjs/common";
 import { GatewayAuthService } from "./gateway.auth.service";
-import { CurrentUser, Public, Sub } from "@app/common/decorators";
+import { CurrentToken, Public, Sub } from "@app/common/decorators";
 import { LocalGuard, RtGuard } from "@app/common/guards";
 import {
   type RegisterUserDto,
@@ -58,7 +58,7 @@ export class GatewayAuthController {
   @HttpCode(200)
   @Post(REFRESH_TOKENS)
   async refreshTokens(
-    @CurrentUser({ user: "RefreshToken" }) { sub, type, rt }: RefreshToken,
+    @CurrentToken({ user: "RefreshToken" }) { sub, type, rt }: RefreshToken,
   ) {
     return this.authService.refreshTokens({
       sub,

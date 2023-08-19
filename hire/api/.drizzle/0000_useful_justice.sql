@@ -11,7 +11,7 @@ EXCEPTION
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
- CREATE TYPE "skills_name_enum" AS ENUM('JavaScript', 'TypeScript', 'NestJs', 'TailwindCss', 'NextJs', 'ReactJs', 'prisma', 'drizzle-orm', 'PostgreSQL', 'MySQL', 'Sqlite', 'MongoDB', 'Redis', 'Firebase', 'Supabase', 'GraphQL', 'Apollo', 'Hasura', 'CockroachDB', 'FaunaDB', 'ScyllaDB', 'ReactNative', 'VueJs', 'Angular', 'Angular 2', 'Qwik', 'Svelte', 'Svelte Kit', 'NuxtJs', 'Express', 'Remix Js', 'Deno', 'other', 'solid Js', 'solid start', 'NodeJs', 'C', 'C++', 'C#', 'ASP .Net', 'Entity Framework', 'Springboot', 'Maven', 'Gradle', 'Java', 'Python', 'Django', 'Flask', 'FastAPI', 'Ruby on Rails', 'Laravel', 'Ruby', 'PHP', 'SQL', 'HTML', 'CSS', 'Swift', 'Kotlin', 'Go', 'Rust', 'Scala', 'Perl', 'Haskell', 'Lua', 'R', 'Matlab', 'Assembly', 'Objective-C', 'Visual Basic', 'Dart', 'Elixir', 'Clojure', 'Groovy', 'Julia', 'F#', 'Erlang', 'Bash', 'PowerShell', 'OCaml', 'Scheme', 'VimL', 'Apex', 'Arduino', 'Crystal', 'D', 'Docker', 'Kubernetes', 'Helm', 'Git', 'Jira', 'Trello', 'Nim', 'Pascal');
+ CREATE TYPE "skills_name_enum" AS ENUM('JavaScript', 'TypeScript', 'NestJs', 'TailwindCss', 'Material UI', 'Sass', 'Bootstrap', 'Chakra UI', 'Less', 'NextJs', 'ReactJs', 'PostgreSQL', 'MySQL', 'Sqlite', 'MongoDB', 'Redis', 'Firebase', 'Supabase', 'GraphQL', 'Apollo', 'Hasura', 'CockroachDB', 'FaunaDB', 'ScyllaDB', 'React Native', 'VueJs', 'Angular', 'Angular 2', 'Qwik', 'Svelte', 'Svelte Kit', 'NuxtJs', 'Express', 'Remix Js', 'Deno', 'other', 'solid Js', 'solid start', 'NodeJs', 'AWS', 'Azure', 'Google Cloud', 'Heroku', 'Vercel', 'Netlify', 'Digital Ocean', 'Linode', 'Cloudflare', 'Cloudinary', 'Fastly', 'C', 'C++', 'C#', 'ASP .Net', 'Entity Framework', 'Springboot', 'Maven', 'Gradle', 'Java', 'Python', 'Django', 'Flask', 'FastAPI', 'Ruby on Rails', 'Laravel', 'Ruby', 'PHP', 'SQL', 'HTML', 'CSS', 'Swift', 'Swift UI', 'Kotlin', 'Go', 'Rust', 'Scala', 'Perl', 'Haskell', 'Lua', 'R', 'Matlab', 'Assembly', 'Objective-C', 'Visual Basic', 'Dart', 'Elixir', 'Clojure', 'Groovy', 'Julia', 'F#', 'Erlang', 'Bash', 'PowerShell', 'OCaml', 'Scheme', 'VimL', 'Apex', 'Arduino', 'Crystal', 'D', 'Docker', 'Kubernetes', 'Helm', 'Git', 'Jira', 'Trello', 'Nim', 'Pascal');
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
@@ -104,7 +104,8 @@ CREATE TABLE IF NOT EXISTS "sessions" (
 CREATE TABLE IF NOT EXISTS "skills" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"skill_name" "skills_name_enum" NOT NULL,
-	"other_name" text
+	"other_name" text,
+	CONSTRAINT "skills_other_name_unique" UNIQUE("other_name")
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "users" (

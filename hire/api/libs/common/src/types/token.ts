@@ -2,6 +2,7 @@ import { WebOrMobile } from "./web.or.mobile";
 
 export type Token = {
   sub: string;
+  type: WebOrMobile;
   iat: number;
   exp: number;
 };

@@ -1,5 +1,5 @@
 import { Module } from "@nestjs/common";
-import { ConfigModule } from "@nestjs/config";
+import { ConfigModule, ConfigService } from "@nestjs/config";
 import { GatewayAuthModule, GatewayUsersModule } from "./modules";
 import { GatewayJobsModule } from "./modules/gateway-jobs/gateway.jobs.module";
 import { APP_GUARD } from "@nestjs/core";

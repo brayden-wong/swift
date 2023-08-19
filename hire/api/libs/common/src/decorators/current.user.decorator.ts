@@ -1,22 +1,22 @@
-import { User } from "@app/common/dto";
+import { AccessTokenDto, User } from "@app/common/dto";
 import { createParamDecorator } from "@nestjs/common";
 import type { ExecutionContext } from "@nestjs/common";
 import type { Request } from "express";
-import { RefreshToken } from "../types";
+import type { RefreshToken } from "../types";
 
-export const CurrentUser = createParamDecorator(
+export const CurrentToken = createParamDecorator(
   (
     data: {
-      user: "User" | "RefreshToken";
+      user: "AccessToken" | "RefreshToken";
       key?: keyof User | keyof RefreshToken;
-    } = { user: "User", key: null },
+    } = { user: "AccessToken", key: null },
     context: ExecutionContext,
   ) => {
     const request = context.switchToHttp().getRequest<Request>();
 
-    if (data.user === "User") {
-      const user = request.user as User;
-      const key = data.key as keyof User;
+    if (data.user === "AccessToken") {
+      const user = request.user as AccessTokenDto;
+      const key = data.key as keyof AccessTokenDto;
 
       return data.key ? user[key] : user;
     }

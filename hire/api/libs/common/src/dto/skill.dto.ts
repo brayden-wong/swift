@@ -1,37 +1,47 @@
 import { InferModel } from "drizzle-orm";
-import { SkillsTable } from "../schemas";
 import { z } from "nestjs-zod/z";
 import { ZodValidationPipe, createZodDto } from "nestjs-zod";
+
+import { SkillsTable } from "../schemas";
 import { Skills } from "../constants";
 
-type SkillEnum = Pick<InferModel<typeof SkillsTable, "select">, "skillName">;
-type ExtractSkillName<T> = T extends { skillName: infer U } ? U : never;
+type SkillEnum = Pick<InferModel<typeof SkillsTable, "select">, "name">;
+type ExtractSkillName<T> = T extends { name: infer U } ? U : never;
 
 export type Skill = ExtractSkillName<SkillEnum>;
 
 const skillsEnum = z.enum(Skills);
 
 const skillsSchema = z.object({
-  skillName: skillsEnum,
+  name: skillsEnum,
   otherName: z.string().optional(),
+  userId: z.string(),
 });
 
 export class CreateSkillDto extends createZodDto(skillsSchema) {
-  skillName: Skill;
+  name: Skill;
   otherName?: string;
 
-  constructor(skillName: Skill);
-  constructor(skillName: Skill, otherName: string);
-  constructor(skillName: Skill, otherName?: string) {
+  constructor(name: Skill, userId: string);
+  constructor(name: Skill, userId: string, otherName: string);
+  constructor(name: Skill, userId: string, otherName?: string) {
     super();
-    if (skillName === "other") {
-      this.skillName = "other";
+    if (name === "other") {
+      this.name = "other";
+      this.userId = userId;
       this.otherName = otherName;
       return;
     }
 
-    this.skillName = skillName;
+    this.name = name;
+    this.userId = userId;
+    this.otherName = null;
   }
 }
 
-export const SkillsValidationPipe = new ZodValidationPipe(skillsSchema);
+export const SkillValidationPipe = new ZodValidationPipe(skillsSchema);
+export const SkillsValidationPipe = new ZodValidationPipe(
+  z.object({
+    skills: z.array(skillsSchema),
+  }),
+);

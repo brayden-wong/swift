@@ -6,15 +6,20 @@ export type RegisterUser = {
 };
 
 export type GetUserByEmail = {
-  email: string;
+  id: string;
   name: string;
+  email: string;
   avatar: string;
-  role: "standard_user" | "company_user";
   boosts: number;
+  firstTimeLogin: boolean;
+  role: "company_user" | "standard_user";
   createdAt: Date;
   updatedAt: Date;
-  id: string;
-  firstTimeLogin: boolean;
+  profile: {
+    id: string;
+    userId: string;
+    interestedIn: string[];
+  };
 };
 
 export type ValidateUser = {
@@ -30,15 +35,18 @@ export type PublicCredentials = {
 };
 
 export type GetUserById = {
-  email: string;
+  id: string;
   name: string;
+  email: string;
   avatar: string;
-  role: "standard_user" | "company_user";
   boosts: number;
-  isActive: boolean;
+  firstTimeLogin: boolean;
+  role: "company_user" | "standard_user";
   createdAt: Date;
   updatedAt: Date;
-  deletedAt: Date;
-  id: string;
-  firstTimeLogin: boolean;
+  profile: {
+    id: string;
+    userId: string;
+    interestedIn: string[];
+  };
 };

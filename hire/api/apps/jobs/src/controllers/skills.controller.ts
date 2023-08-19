@@ -1,7 +1,19 @@
-import { HEALTH_CHECK } from "@app/common/constants";
-import { HealthCheck } from "@app/common/return_types";
+import { ADD_SKILL } from "@app/common/constants";
 import { Controller } from "@nestjs/common";
-import { MessagePattern } from "@nestjs/microservices";
+import { MessagePattern, Payload } from "@nestjs/microservices";
+import { SkillsService } from "../services";
+import { CreateSkillDto } from "@app/common/dto";
 
 @Controller()
-export class SkillsController {}
+export class SkillsController {
+  constructor(private readonly skillsService: SkillsService) {}
+
+  @MessagePattern(ADD_SKILL)
+  async addSkill(
+    @Payload() createSkillDto: CreateSkillDto | Array<CreateSkillDto>,
+  ) {
+    return await this.skillsService.addSkills(
+      Array.isArray(createSkillDto) ? createSkillDto : Array.of(createSkillDto),
+    );
+  }
+}

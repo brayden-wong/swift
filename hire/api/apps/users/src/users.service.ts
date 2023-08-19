@@ -1,7 +1,7 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { Database, InjectDrizzle } from "@app/common/modules";
 import { hash } from "bcryptjs";
-import { UsersTable } from "@app/common/schemas";
+import { ProfileTable, UsersTable } from "@app/common/schemas";
 
 import { RegisterUserDto } from "@app/common/dto";
 import {
@@ -11,6 +11,7 @@ import {
   RegisterUser,
   ValidateUser,
 } from "@app/common/return_types";
+import { eq } from "drizzle-orm";
 
 @Injectable()
 export class UsersService {
@@ -28,6 +29,8 @@ export class UsersService {
       })
       .returning();
 
+    await this.db.insert(ProfileTable).values({ userId: user.id });
+
     return {
       id: user.id,
       name: user.name,
@@ -37,7 +40,7 @@ export class UsersService {
   }
 
   async getUserByEmail(email: string): Promise<GetUserByEmail> {
-    return await this.db.query.UsersTable.findFirst({
+    const user = await this.db.query.UsersTable.findFirst({
       where: (UsersTable, { eq }) => eq(UsersTable.email, email.toLowerCase()),
       columns: {
         id: true,
@@ -50,7 +53,12 @@ export class UsersService {
         createdAt: true,
         updatedAt: true,
       },
+      with: {
+        profile: true,
+      },
     });
+
+    return user;
   }
 
   async validateUser(email: string): Promise<ValidateUser | null> {
@@ -62,15 +70,23 @@ export class UsersService {
       },
     });
 
+    console.log(user);
+
     return user ? user : null;
   }
 
   async getUserById(id: string): Promise<GetUserById> {
+    console.log(id);
     const user = await this.db.query.UsersTable.findFirst({
       where: (UsersTable, { eq }) => eq(UsersTable.id, id),
+      with: {
+        profile: true,
+      },
     });
 
-    if (!user) throw new NotFoundException("User does not exist");
+    console.log(user);
+
+    if (!user) return null;
 
     const { password, ...data } = user;
 
