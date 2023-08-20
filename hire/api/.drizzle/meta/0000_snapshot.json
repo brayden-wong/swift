@@ -1,7 +1,7 @@
 {
   "version": "5",
   "dialect": "pg",
-  "id": "28a03cf4-0de2-4684-aaf2-8e7b9adec3a2",
+  "id": "0dc1b14b-0ab0-4ea7-862d-50513af5fed0",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "applications_and_files": {
@@ -499,7 +499,7 @@
         },
         "interested_in": {
           "name": "interested_in",
-          "type": "text[]",
+          "type": "job_interests[]",
           "primaryKey": false,
           "notNull": false
         },
@@ -703,6 +703,13 @@
           "notNull": true,
           "default": "gen_random_uuid()"
         },
+        "title": {
+          "name": "title",
+          "type": "user_title",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'title'"
+        },
         "name": {
           "name": "name",
           "type": "text",
@@ -777,6 +784,13 @@
         }
       },
       "indexes": {
+        "email_index": {
+          "name": "email_index",
+          "columns": [
+            "email"
+          ],
+          "isUnique": false
+        },
         "active_index": {
           "name": "active_index",
           "columns": [
@@ -941,6 +955,30 @@
         "--": "--"
       }
     },
+    "job_interests": {
+      "name": "job_interests",
+      "values": {
+        "Software Engineer": "Software Engineer",
+        "Full Stack Engineer": "Full Stack Engineer",
+        "Backend Engineer": "Backend Engineer",
+        "Frontend Engineer": "Frontend Engineer",
+        "DevOps Engineer": "DevOps Engineer",
+        "Data Engineer": "Data Engineer",
+        "Data Scientist": "Data Scientist",
+        "Machine Learning Engineer": "Machine Learning Engineer",
+        "QA Engineer": "QA Engineer",
+        "Mobile Engineer": "Mobile Engineer",
+        "Security Engineer": "Security Engineer",
+        "Product Manager": "Product Manager",
+        "Project Manager": "Project Manager",
+        "Technical Program Manager": "Technical Program Manager",
+        "UX Designer": "UX Designer",
+        "UI Designer": "UI Designer",
+        "UI/UX Designer": "UI/UX Designer",
+        "Recruiter": "Recruiter",
+        "Other": "Other"
+      }
+    },
     "session_type": {
       "name": "session_type",
       "values": {
@@ -986,9 +1024,9 @@
         "Express": "Express",
         "Remix Js": "Remix Js",
         "Deno": "Deno",
-        "other": "other",
-        "solid Js": "solid Js",
-        "solid start": "solid start",
+        "Other": "Other",
+        "Solid Js": "Solid Js",
+        "Solid start": "Solid start",
         "NodeJs": "NodeJs",
         "AWS": "AWS",
         "Azure": "Azure",
@@ -1059,6 +1097,38 @@
         "Trello": "Trello",
         "Nim": "Nim",
         "Pascal": "Pascal"
+      }
+    },
+    "user_title": {
+      "name": "user_title",
+      "values": {
+        "Backend Engineer": "Backend Engineer",
+        "Cloud Architect": "Cloud Architect",
+        "Cloud Engineer": "Cloud Engineer",
+        "Cybersecurity Engineer": "Cybersecurity Engineer",
+        "Data Analyst": "Data Analyst",
+        "Data Engineer": "Data Engineer",
+        "Data Scientist": "Data Scientist",
+        "Database Administrator": "Database Administrator",
+        "DevOps Engineer": "DevOps Engineer",
+        "Embedded Systems Engineer": "Embedded Systems Engineer",
+        "Frontend Engineer": "Frontend Engineer",
+        "Full Stack Engineer": "Full Stack Engineer",
+        "IT Manager": "IT Manager",
+        "Machine Learning Engineer": "Machine Learning Engineer",
+        "Mobile App Developer": "Mobile App Developer",
+        "Network Engineer": "Network Engineer",
+        "Other": "Other",
+        "Product Manager": "Product Manager",
+        "QA Engineer": "QA Engineer",
+        "Site Reliability Engineer": "Site Reliability Engineer",
+        "Software Architect": "Software Architect",
+        "Software Engineer": "Software Engineer",
+        "Systems Administrator": "Systems Administrator",
+        "Systems Analyst": "Systems Analyst",
+        "UI/UX Designer": "UI/UX Designer",
+        "Web Developer": "Web Developer",
+        "title": "title"
       }
     },
     "user_role": {

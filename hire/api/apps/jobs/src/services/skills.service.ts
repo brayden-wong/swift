@@ -34,7 +34,6 @@ export class SkillsService {
       const skills: Array<AddSkill> = [];
 
       for (const skill of createSkillDto) {
-        console.log("1");
         const result = await this.addSkill(skill, profileId);
         if (result !== null) skills.push(result);
       }
@@ -57,7 +56,7 @@ export class SkillsService {
       const results = await this.db.query.SkillsTable.findMany({
         where: (SkillsTable, { and, eq }) =>
           and(
-            eq(SkillsTable.name, "other"),
+            eq(SkillsTable.name, "Other"),
             like(SkillsTable.otherName, `%${createSkillDto.otherName}%`),
           ),
       });

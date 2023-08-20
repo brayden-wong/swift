@@ -10,7 +10,8 @@ export type LoggedIn = {
     id: string;
     name: string;
     email: string;
-    avatar: string;
+    title: string;
+    avatar: string | null;
     role: "standard_user" | "company_user";
     boosts: number;
     isActive: boolean;

@@ -9,7 +9,7 @@ export type Profile = {
   id: string;
   name: string;
   email: string;
-  avatar: string;
+  avatar: string | null;
 };
 
 export type Credentials = {

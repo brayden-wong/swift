@@ -224,8 +224,6 @@ export default () => {
 
     const user = await login({ email, password, type: "mobile" });
 
-    console.log(user.firstTimeLogin);
-
     if (user.firstTimeLogin) {
       router.push("/onboarding");
       return;

@@ -5,13 +5,25 @@ EXCEPTION
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
+ CREATE TYPE "job_interests" AS ENUM('Software Engineer', 'Full Stack Engineer', 'Backend Engineer', 'Frontend Engineer', 'DevOps Engineer', 'Data Engineer', 'Data Scientist', 'Machine Learning Engineer', 'QA Engineer', 'Mobile Engineer', 'Security Engineer', 'Product Manager', 'Project Manager', 'Technical Program Manager', 'UX Designer', 'UI Designer', 'UI/UX Designer', 'Recruiter', 'Other');
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
  CREATE TYPE "session_type" AS ENUM('web', 'mobile');
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
- CREATE TYPE "skills_name_enum" AS ENUM('JavaScript', 'TypeScript', 'NestJs', 'TailwindCss', 'Material UI', 'Sass', 'Bootstrap', 'Chakra UI', 'Less', 'NextJs', 'ReactJs', 'PostgreSQL', 'MySQL', 'Sqlite', 'MongoDB', 'Redis', 'Firebase', 'Supabase', 'GraphQL', 'Apollo', 'Hasura', 'CockroachDB', 'FaunaDB', 'ScyllaDB', 'React Native', 'VueJs', 'Angular', 'Angular 2', 'Qwik', 'Svelte', 'Svelte Kit', 'NuxtJs', 'Express', 'Remix Js', 'Deno', 'other', 'solid Js', 'solid start', 'NodeJs', 'AWS', 'Azure', 'Google Cloud', 'Heroku', 'Vercel', 'Netlify', 'Digital Ocean', 'Linode', 'Cloudflare', 'Cloudinary', 'Fastly', 'C', 'C++', 'C#', 'ASP .Net', 'Entity Framework', 'Springboot', 'Maven', 'Gradle', 'Java', 'Python', 'Django', 'Flask', 'FastAPI', 'Ruby on Rails', 'Laravel', 'Ruby', 'PHP', 'SQL', 'HTML', 'CSS', 'Swift', 'Swift UI', 'Kotlin', 'Go', 'Rust', 'Scala', 'Perl', 'Haskell', 'Lua', 'R', 'Matlab', 'Assembly', 'Objective-C', 'Visual Basic', 'Dart', 'Elixir', 'Clojure', 'Groovy', 'Julia', 'F#', 'Erlang', 'Bash', 'PowerShell', 'OCaml', 'Scheme', 'VimL', 'Apex', 'Arduino', 'Crystal', 'D', 'Docker', 'Kubernetes', 'Helm', 'Git', 'Jira', 'Trello', 'Nim', 'Pascal');
+ CREATE TYPE "skills_name_enum" AS ENUM('JavaScript', 'TypeScript', 'NestJs', 'TailwindCss', 'Material UI', 'Sass', 'Bootstrap', 'Chakra UI', 'Less', 'NextJs', 'ReactJs', 'PostgreSQL', 'MySQL', 'Sqlite', 'MongoDB', 'Redis', 'Firebase', 'Supabase', 'GraphQL', 'Apollo', 'Hasura', 'CockroachDB', 'FaunaDB', 'ScyllaDB', 'React Native', 'VueJs', 'Angular', 'Angular 2', 'Qwik', 'Svelte', 'Svelte Kit', 'NuxtJs', 'Express', 'Remix Js', 'Deno', 'Other', 'Solid Js', 'Solid start', 'NodeJs', 'AWS', 'Azure', 'Google Cloud', 'Heroku', 'Vercel', 'Netlify', 'Digital Ocean', 'Linode', 'Cloudflare', 'Cloudinary', 'Fastly', 'C', 'C++', 'C#', 'ASP .Net', 'Entity Framework', 'Springboot', 'Maven', 'Gradle', 'Java', 'Python', 'Django', 'Flask', 'FastAPI', 'Ruby on Rails', 'Laravel', 'Ruby', 'PHP', 'SQL', 'HTML', 'CSS', 'Swift', 'Swift UI', 'Kotlin', 'Go', 'Rust', 'Scala', 'Perl', 'Haskell', 'Lua', 'R', 'Matlab', 'Assembly', 'Objective-C', 'Visual Basic', 'Dart', 'Elixir', 'Clojure', 'Groovy', 'Julia', 'F#', 'Erlang', 'Bash', 'PowerShell', 'OCaml', 'Scheme', 'VimL', 'Apex', 'Arduino', 'Crystal', 'D', 'Docker', 'Kubernetes', 'Helm', 'Git', 'Jira', 'Trello', 'Nim', 'Pascal');
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ CREATE TYPE "user_title" AS ENUM('Backend Engineer', 'Cloud Architect', 'Cloud Engineer', 'Cybersecurity Engineer', 'Data Analyst', 'Data Engineer', 'Data Scientist', 'Database Administrator', 'DevOps Engineer', 'Embedded Systems Engineer', 'Frontend Engineer', 'Full Stack Engineer', 'IT Manager', 'Machine Learning Engineer', 'Mobile App Developer', 'Network Engineer', 'Other', 'Product Manager', 'QA Engineer', 'Site Reliability Engineer', 'Software Architect', 'Software Engineer', 'Systems Administrator', 'Systems Analyst', 'UI/UX Designer', 'Web Developer', 'title');
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
@@ -81,7 +93,7 @@ CREATE TABLE IF NOT EXISTS "job_posts_and_skills" (
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "profile" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-	"interested_in" text[],
+	"interested_in" job_interests[],
 	"user_id" uuid
 );
 --> statement-breakpoint
@@ -110,6 +122,7 @@ CREATE TABLE IF NOT EXISTS "skills" (
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "users" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"title" "user_title" DEFAULT 'title',
 	"name" text NOT NULL,
 	"email" text NOT NULL,
 	"password" text NOT NULL,
@@ -140,6 +153,7 @@ CREATE TABLE IF NOT EXISTS "users_and_companies" (
 CREATE INDEX IF NOT EXISTS "name_index" ON "companies" ("name");--> statement-breakpoint
 CREATE UNIQUE INDEX IF NOT EXISTS "file_name_on_user_id" ON "files" ("file_name","user_id");--> statement-breakpoint
 CREATE INDEX IF NOT EXISTS "job_title_index" ON "job_posts" ("job_prefix","other_title");--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "email_index" ON "users" ("email");--> statement-breakpoint
 CREATE INDEX IF NOT EXISTS "active_index" ON "users" ("is_active");--> statement-breakpoint
 CREATE INDEX IF NOT EXISTS "boosts_index" ON "users" ("boosts");--> statement-breakpoint
 DO $$ BEGIN

@@ -70,21 +70,16 @@ export class UsersService {
       },
     });
 
-    console.log(user);
-
     return user ? user : null;
   }
 
   async getUserById(id: string): Promise<GetUserById> {
-    console.log(id);
     const user = await this.db.query.UsersTable.findFirst({
       where: (UsersTable, { eq }) => eq(UsersTable.id, id),
       with: {
         profile: true,
       },
     });
-
-    console.log(user);
 
     if (!user) return null;
 

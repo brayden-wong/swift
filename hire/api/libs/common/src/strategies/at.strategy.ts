@@ -35,8 +35,6 @@ export class AtStrategy extends PassportStrategy(Strategy, AT) {
         })
         .pipe(
           map((user) => {
-            console.log(user);
-
             return payload.sub === user.id ? payload : null;
           }),
         ),

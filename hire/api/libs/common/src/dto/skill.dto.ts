@@ -26,8 +26,8 @@ export class CreateSkillDto extends createZodDto(skillsSchema) {
   constructor(name: Skill, userId: string, otherName: string);
   constructor(name: Skill, userId: string, otherName?: string) {
     super();
-    if (name === "other") {
-      this.name = "other";
+    if (name === "Other") {
+      this.name = "Other";
       this.userId = userId;
       this.otherName = otherName;
       return;
