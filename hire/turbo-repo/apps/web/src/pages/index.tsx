@@ -1,29 +1,43 @@
-import Head from "next/head";
-import Link from "next/link";
+import Login from "@/components/auth/login";
+import Background from "@/components/landing/background";
+import LandingText from "@/components/landing/LandingText";
+import Selection from "@/components/user-selection/selection";
 import styles from "@/styles/landing.module.css";
-import logo from "public/logo.png";
+import Head from "next/head";
 import Image from "next/image";
+import Link from "next/link";
+import logo from "public/logo1.png";
+import { useState } from "react";
 import { BsSearch } from "react-icons/bs";
+
 export default function Home() {
+  const [ChangePage, setChangePage] = useState(false);
   return (
     <>
       <Head>
-        <title>SwiftConnect - Feed</title>
+        <title>SwiftHire</title>
       </Head>
-      <div className={styles.header}>
-        <Image src={logo} width={200} height={50} alt="logo" />
-        <div className={styles.links}>
-          <Link href="/auth/login">Login</Link>
-        </div>
-      </div>
-      <div className={styles.content}>
-        <input
-          placeholder="Job title,key word"
-          className={styles.input}
-          type="text"
+      <div
+        className={`${styles.header} ${
+          ChangePage === true && "h-[0!important] overflow-hidden"
+        } `}
+      >
+        <Image
+          className={`${
+            ChangePage === true ? " opacity-0 gohidden " : "topper opacity-100"
+          } smooth`}
+          src={logo}
+          alt="logo"
         />
-        <BsSearch className={styles.icon} />
       </div>
+      <div
+        className={`${styles.content}  ${ChangePage === true && "opacity-0 "}`}
+      >
+        <Selection setChangePage={setChangePage} />
+        <LandingText ChangePage={ChangePage} />
+      </div>
+
+      <Login ChangePage={ChangePage} setChangePage={setChangePage} />
     </>
   );
 }

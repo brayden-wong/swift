@@ -1,59 +1,214 @@
 .header {
-    display: flex;
-    background-color: #f5f5f5c7;
-    height: 10vh;
-    width: 100%;
-    padding: 10px;
-    align-items: center;
+  display: flex;
+  background-color: inherit;
+  height: 20vh;
+  width: 50%;
+  position: absolute;
+  padding: 10px;
+  justify-content: center;
+  align-items: center;
+  z-index: 3;
+  perspective: 500px;
+  transition: 0.7s;
+  overflow: visible;
+}
+
+.shrink {
+  left: -5.5%;
+  overflow: hidden;
+  top: 9.5% !important;
+  width: 33.3% !important;
+  transition: 1s !important;
+
+
+
+
 
 }
 
-.header .links {
-    margin-left: auto;
-    margin-right: 1%;
-    transition: 0.7s;
-    color: #270747;
-}
 
-.header .links:hover {
-    color: #0000002e
-}
 
-.header img {
-    margin-right: auto;
-    margin-left: 1%;
-}
 
 .icon {
-    position: absolute;
-    right: 1vw;
-    width: 40vw;
-    height: 80vh;
-    top: 17vh;
-    color: #f5f5f5c7;
+  position: absolute;
+  right: 1vw;
+  background-color: red;
+  width: 40vw;
+  height: 80vh;
+  top: 17vh;
+  scale: 1.2;
+  color: #f5f5f5c7;
 }
+
+
 
 .content {
-    background-color: #002E47;
-
-    height: 90vh;
-    width: 100%;
-    align-items: center;
+  transition: 0.7s;
+  background-blend-mode: hard-light;
+  position: absolute;
+  background-size: cover;
+  background-image: url("/landingblob1.png");
+  height: 110vh;
+  top: -6vh;
+  left: -6%;
+  width: 110%;
+  z-index: 1;
+  align-items: center;
+  background-position: 1% 1%;
+  background-repeat: no-repeat;
+  /* animation: backgroundChange 20s infinite cubic-bezier(0.445, 0.05, 0.55, 0.95); */
 }
 
-.input {
-    outline: none;
-    background-color: transparent;
-    border-bottom: 3px solid #f5f5f5c7;
-    color: #f5f5f5c7;
-    position: absolute;
-    right: 23.3vw;
-    top: 46vh;
-    z-index: 5;
-    font-size: larger;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    padding: 3px;
+.iconWrapper {
+  position: relative;
+  cursor: pointer;
+}
+
+.selections:hover>.iconText {
+  top: 5% !important;
+  opacity: 1 !important;
+
+}
+
+.iconText {
+  text-align: center;
+  font-weight: 400;
+  position: relative;
+
+  width: 100%;
+  opacity: 0;
+  left: 0;
+  font-size: 1vw;
+  transition: 0.7s;
+  ;
+  top: 40%;
+  transition: 0.7s;
+
+  display: flex;
+  align-self: center;
+  white-space: nowrap;
+}
+
+
+@keyframes backgroundChange {
+  0%, 100% {
+    background-position: 1% 1%;
+  }
+
+  25% {
+    background-position: 3vw -5%;
+  }
+
+  50% {
+    background-position: 6vw -3%;
+  }
+
+  75% {
+    background-position: 2vw -10%;
+  }
+}
+
+
+.move {
+  top: -100% !important;
+  left: -100% !important;
+
+}
+
+.scale {
+  /* scale: 50 !important;
+  transition: 8s !important; */
+}
+
+
+.selections {
+  color: #f5f5f5;
+  font-size: 3.5vw;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  width: 100%;
+  font-weight: 500;
+  margin-top: 10%;
+  transition: 0.7s;
+  padding: 10px;
+  cursor: pointer;
+
+  height: 50%;
+  z-index: 5;
+}
+
+
+
+.userSelection {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  left: 90%;
+  width: 10%;
+  transition: 0.7s;
+  justify-content: center;
+  height: 50%;
+  top: 5%;
+  padding: 20px;
+
+
+}
+
+.container {
+  height: 100%;
+  width: 100%;
+}
+
+.bottomLeftCurve {
+  width: 200px;
+  height: 300px;
+  border: 4vw solid red;
+}
+
+.landingTextContent {
+  position: absolute;
+  top: 30%;
+  left: 10%;
+  height: 30%;
+  transition: 1.5s;
+  transform: translateX(0) translateY(0);
+  overflow: visible;
+}
+
+.landingTextLight {
+  font-size: 5vw;
+  font-weight: 200;
+}
+
+.landingTextBold {
+  font-size: 5vw;
+  font-weight: 900;
+}
+
+.landingTextLightSmall {
+  width: 55%;
+  font-size: 1.5vw;
+  line-height: 32px;
+}
+
+.landingButton {
+
+  border-bottom: 3px solid #000;
+  color: #000;
+  transition: 0.7s;
+  padding: 5px;
+  font-size: large;
+  position: absolute;
+
+  left: 50%;
+  top: 90%;
+
+}
+
+.landingButton:hover {
+  color: #423b3b;
+  border-color: #423b3b
 }
